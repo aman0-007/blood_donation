@@ -1,3 +1,4 @@
+import 'package:blood_donor/checkeligibility.dart';
 import 'package:blood_donor/finddonor.dart';
 import 'package:blood_donor/requestspage.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +93,10 @@ class _HomePageState extends State<HomePage> {
                                 icon: const Icon(Icons.arrow_forward_ios_rounded),
                                 color: Colors.black,
                                 onPressed: () {
-                                  print("object");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const Checkeligibility()), // Replace RequestPage with your actual request page
+                                  );
                                 },
                               ),
                             ],

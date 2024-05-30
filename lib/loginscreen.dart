@@ -1,6 +1,5 @@
 import 'package:blood_donor/homepage.dart';
 import 'package:blood_donor/register.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {

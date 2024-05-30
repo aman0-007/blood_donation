@@ -131,7 +131,7 @@ class _AccountOptionPageState extends State<AccountOptionPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
+                SizedBox(
                   width: double.infinity,
                   child: Image.asset("assets/bottomimageaccountpage.png",fit: BoxFit.fitHeight,),
                 ),

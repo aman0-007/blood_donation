@@ -1,3 +1,4 @@
+import 'package:blood_donor/homepage.dart';
 import 'package:flutter/material.dart';
 
 class Requestspage extends StatefulWidget {
@@ -473,6 +474,36 @@ class _RequestpageState extends State<Requestspage> {
                               ),
                             ),
                           ),
+                        ),
+                        const SizedBox(height: 20,),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HomePage()));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(double.infinity, 50),
+                                    backgroundColor: Colors.red,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Submit',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
