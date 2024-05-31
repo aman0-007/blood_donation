@@ -71,11 +71,16 @@ class _FinddonorState extends State<Finddonor> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 17.0, right: 100, top: 7),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(color: Colors.grey), // Add border to container
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        hintText: 'Select', // Hint text
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
@@ -88,26 +93,23 @@ class _FinddonorState extends State<Finddonor> {
                           items: [
                             DropdownMenuItem<String>(
                               value: null,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                                child: Text('Select', style: TextStyle(color: Colors.grey)),
+                              child: Text(
+                                'Select',
+                                style: TextStyle(color: Colors.grey), // Set grey color
                               ),
                             ),
                             ...bloodGroups.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                                  child: Text(value),
-                                ),
+                                child: Text(value),
                               );
                             }),
                           ],
-                          icon: Icon(Icons.arrow_drop_down, color: Colors.grey), // Custom dropdown icon
                         ),
                       ),
                     ),
                   ),
+
                   Padding(
                     padding: const EdgeInsets.only(left: 17.0,top: 12),
                     child: Row(
