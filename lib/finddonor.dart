@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Finddonor extends StatefulWidget {
-   Finddonor({super.key});
+   const Finddonor({super.key});
 
   @override
   State<Finddonor> createState() => _FinddonorState();
@@ -9,7 +9,7 @@ class Finddonor extends StatefulWidget {
 
 class _FinddonorState extends State<Finddonor> {
 
-  String selectedBloodGroup = 'A+';
+  String? selectedBloodGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +24,12 @@ class _FinddonorState extends State<Finddonor> {
             ),
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 17.0,top: 20),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 17.0,top: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           "Find Donor",
                           style: TextStyle(
                             color: Colors.white,
@@ -40,12 +40,12 @@ class _FinddonorState extends State<Finddonor> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 17.0,),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 17.0,),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           "Blood donors around you",
                           style: TextStyle(
                               color: Colors.white70,
@@ -55,12 +55,12 @@ class _FinddonorState extends State<Finddonor> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 17.0,top: 16),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 17.0,top: 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           "Choose Blood Group",
                           style: TextStyle(
                               color: Colors.white
@@ -73,7 +73,7 @@ class _FinddonorState extends State<Finddonor> {
                     padding: const EdgeInsets.only(left: 17.0, right: 100, top: 7),
                     child: InputDecorator(
                       decoration: InputDecoration(
-                        hintText: 'Select', // Hint text
+                        hintText: 'Select',
                         filled: true,
                         fillColor: Colors.white,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
@@ -84,14 +84,14 @@ class _FinddonorState extends State<Finddonor> {
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                          value: selectedBloodGroup == '' ? null : selectedBloodGroup,
+                          value: selectedBloodGroup,
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedBloodGroup = newValue ?? '';
                             });
                           },
                           items: [
-                            DropdownMenuItem<String>(
+                            const DropdownMenuItem<String>(
                               value: null,
                               child: Text(
                                 'Select',
@@ -110,12 +110,12 @@ class _FinddonorState extends State<Finddonor> {
                     ),
                   ),
 
-                  Padding(
-                    padding: const EdgeInsets.only(left: 17.0,top: 12),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 17.0,top: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           "Location",
                           style: TextStyle(
                               color: Colors.white
@@ -136,9 +136,9 @@ class _FinddonorState extends State<Finddonor> {
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0,vertical: 12.0),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 12.0),
                       ),
-                      style: TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.black),
                     ),
                   ),
                   Padding(
@@ -147,7 +147,7 @@ class _FinddonorState extends State<Finddonor> {
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 17,horizontal: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 17,horizontal: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                           side: BorderSide(
@@ -156,7 +156,7 @@ class _FinddonorState extends State<Finddonor> {
                           ),
                         ),
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(

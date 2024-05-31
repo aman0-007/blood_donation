@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'package:blood_donor/accountoptionpage.dart';
-import 'package:blood_donor/checkeligibility.dart';
+import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/finddonor.dart';
-import 'package:blood_donor/homepage.dart';
-import 'package:blood_donor/notification.dart';
-import 'package:blood_donor/requestspage.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -22,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Finddonor() ,
+      home: Bottomnavigationpage() ,
     );
   }
 }

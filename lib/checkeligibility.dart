@@ -132,52 +132,52 @@ class _CheckeligibilityState extends State<Checkeligibility> {
           ),
 
 
-         /* Positioned(
-            top: 130,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return ScaleTransition(
-                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(animation),
-                  child: child,
-                );
-              },
-              child: _containers[_currentIndex],
-            ),
-          ),*/
+          /* Positioned(
+ top: 130,
+ child: AnimatedSwitcher(
+ duration: const Duration(milliseconds: 500),
+ transitionBuilder: (Widget child, Animation<double> animation) {
+ return ScaleTransition(
+ scale: Tween<double>(begin: 0.0, end: 1.0).animate(animation),
+ child: child,
+ );
+ },
+ child: _containers[_currentIndex],
+ ),
+ ),*/
 
           /* Positioned(
-            top: 130,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
-              child: _containers[_currentIndex],
-            ),
-          ),*/
+ top: 130,
+ child: AnimatedSwitcher(
+ duration: const Duration(milliseconds: 500),
+ transitionBuilder: (Widget child, Animation<double> animation) {
+ return SlideTransition(
+ position: Tween<Offset>(
+ begin: Offset(1.0, 0.0),
+ end: Offset.zero,
+ ).animate(animation),
+ child: child,
+ );
+ },
+ child: _containers[_currentIndex],
+ ),
+ ),*/
           /*Positioned(
-            top: 130,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return ScaleTransition(
-                  scale: animation,
-                  child: FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  ),
-                );
-              },
-              child: _containers[_currentIndex],
-            ),
-          ),*/
+ top: 130,
+ child: AnimatedSwitcher(
+ duration: const Duration(milliseconds: 500),
+ transitionBuilder: (Widget child, Animation<double> animation) {
+ return ScaleTransition(
+ scale: animation,
+ child: FadeTransition(
+ opacity: animation,
+ child: child,
+ ),
+ );
+ },
+ child: _containers[_currentIndex],
+ ),
+ ),*/
 
         ],
       ),
@@ -391,8 +391,8 @@ class ContainerTwo extends StatelessWidget {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0,top: 10),
+            const Padding(
+              padding: EdgeInsets.only(left: 25.0,top: 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

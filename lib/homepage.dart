@@ -1,6 +1,4 @@
 import 'package:blood_donor/checkeligibility.dart';
-import 'package:blood_donor/finddonor.dart';
-import 'package:blood_donor/requestspage.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,7 +9,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
 
   final List<String> imageAssets = [
     "assets/imgforsliderview.png",
@@ -66,18 +63,18 @@ class _HomePageState extends State<HomePage> {
                     child: Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40),
-                          color: Colors.yellowAccent,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 3,
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
-                            )
-                          ]
+                            borderRadius: BorderRadius.circular(40),
+                            color: Colors.yellowAccent,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 3,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              )
+                            ]
                         ),
-                        child:  Padding(
+                        child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: Row(
                             children: [
@@ -148,8 +145,8 @@ class _HomePageState extends State<HomePage> {
                               child: Text(
                                 "Nearby donors",
                                 style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w900
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w900
                                 ),
                               ),
                             ),
@@ -343,59 +340,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-
-      bottomNavigationBar: _currentIndex == 0 || _currentIndex == 1
-          ? BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (int index) {
-          setState(() {
-            _currentIndex = index;
-            switch (_currentIndex) {
-              case 0 :
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()), // Replace RequestPage with your actual request page
-                );
-                break;
-              case 1 :
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Finddonor()),
-                );
-                break;
-              case 2:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Requestspage()),
-                );
-                break;
-            }
-          });
-        },
-        unselectedItemColor:const Color(0xFF7E0202),
-        selectedItemColor: Colors.redAccent,
-        selectedFontSize: 14.0,
-        unselectedFontSize: 14.0,
-        items: const <BottomNavigationBarItem>[
-
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'Home'
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.find_in_page_outlined),
-              label: 'Find Donor'
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.add_task_sharp,),
-              label: 'Request'
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Profile'
-          ),
-        ],
-      ): null ,
     );
   }
 }
