@@ -1,3 +1,4 @@
+import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/homepage.dart';
 import 'package:blood_donor/register.dart';
 import 'package:flutter/material.dart';
@@ -112,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 70.0),
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomePage()));
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const Bottomnavigationpage()));
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
