@@ -9,7 +9,12 @@ class RegisteScreen extends StatefulWidget {
 }
 
 class _RegisteScreenState extends State<RegisteScreen> {
-  bool _obscureText = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,8 @@ class _RegisteScreenState extends State<RegisteScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Welcome Back!",
+                    Text(
+                      "Welcome Back!",
                       style: TextStyle(
                         color: Color(0xFF7E0202),
                         fontSize: 30.0,
@@ -50,9 +56,11 @@ class _RegisteScreenState extends State<RegisteScreen> {
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: TextField(
+                  controller: _emailController,
+                ),
               ),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -72,16 +80,17 @@ class _RegisteScreenState extends State<RegisteScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: TextField(
-                  obscureText: _obscureText,
+                  controller: _passwordController,
+                  obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
                         color: Colors.grey,
                       ),
                       onPressed: () {
                         setState(() {
-                          _obscureText = !_obscureText;
+                          _obscurePassword = !_obscurePassword;
                         });
                       },
                     ),
@@ -94,7 +103,7 @@ class _RegisteScreenState extends State<RegisteScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 40,top: 30),
                     child: Text(
-                      "E-mail/Phone Number",
+                      "Conform password",
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
@@ -103,9 +112,25 @@ class _RegisteScreenState extends State<RegisteScreen> {
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: TextField(
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirmPassword,
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
+                        });
+                      },
+                    ),
+                  ),
+                ),
               ),
               Row(
                 children: [
