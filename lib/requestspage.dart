@@ -1,3 +1,4 @@
+import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/homepage.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +26,7 @@ class _RequestpageState extends State<Requestspage> {
                     color: Colors.redAccent,
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: const Column(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
@@ -33,18 +34,29 @@ class _RequestpageState extends State<Requestspage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(
-                              "Back",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                            Padding(
+                              padding: const EdgeInsets.only(left: 17.0,top: 7,right: 12),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(builder: (_) => const Bottomnavigationpage()),
+                                  );
+                                },
+                                child: Text(
+                                  "Back",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 13.0, top: 3),
+                        padding: EdgeInsets.only(left: 20.0, top: 1),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -53,14 +65,14 @@ class _RequestpageState extends State<Requestspage> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 17,
+                                fontSize: 20,
                               ),
                             ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 13.0, top: 0, bottom: 7.0),
+                        padding: EdgeInsets.only(left: 20.0, top: 0, bottom: 11.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [

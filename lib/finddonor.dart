@@ -25,7 +25,7 @@ class _FinddonorState extends State<Finddonor> {
               child: Column(
                 children: [
                   const Padding(
-                    padding: EdgeInsets.only(left: 17.0,top: 20),
+                    padding: EdgeInsets.only(left: 22.0,top: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -41,7 +41,7 @@ class _FinddonorState extends State<Finddonor> {
                     ),
                   ),
                   const Padding(
-                    padding: EdgeInsets.only(left: 17.0,),
+                    padding: EdgeInsets.only(left: 22.0,),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -49,14 +49,14 @@ class _FinddonorState extends State<Finddonor> {
                           "Blood donors around you",
                           style: TextStyle(
                               color: Colors.white70,
-                              fontSize: 12,
+                              fontSize: 13,
                           ),
                         ),
                       ],
                     ),
                   ),
                   const Padding(
-                    padding: EdgeInsets.only(left: 17.0,top: 16),
+                    padding: EdgeInsets.only(left: 22.0,top: 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -70,7 +70,7 @@ class _FinddonorState extends State<Finddonor> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 17.0, right: 100, top: 7),
+                    padding: const EdgeInsets.only(left: 22.0, right: 100, top: 7),
                     child: InputDecorator(
                       decoration: InputDecoration(
                         hintText: 'Select',
@@ -111,7 +111,7 @@ class _FinddonorState extends State<Finddonor> {
                   ),
 
                   const Padding(
-                    padding: EdgeInsets.only(left: 17.0,top: 12),
+                    padding: EdgeInsets.only(left: 22.0,top: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -125,7 +125,7 @@ class _FinddonorState extends State<Finddonor> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 17.0,right: 100,top: 7),
+                    padding: const EdgeInsets.only(left: 22.0,right: 100,top: 7),
                     child: TextField(
                       decoration: InputDecoration(
                         filled: true,
@@ -142,7 +142,7 @@ class _FinddonorState extends State<Finddonor> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 180.0,top: 40,bottom: 40,right: 180),
+                    padding: const EdgeInsets.only(left: 135.0,top: 40,bottom: 40,right: 130),
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(

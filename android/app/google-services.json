@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "274695880965-109id30a6li5gnug6j0eiqv1c32knson.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.blood_donor",
+            "certificate_hash": "9dfbfcf9f5a031cb1b270906540f4a12c4bc128c"
+          }
+        },
+        {
           "client_id": "274695880965-v3alm5fdm39gubu9skv39iu09dtg0eab.apps.googleusercontent.com",
           "client_type": 3
         }

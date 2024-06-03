@@ -92,7 +92,7 @@ class _CheckeligibilityState extends State<Checkeligibility> {
           ),
           Positioned(
             top: 25,
-            left: 130,
+            left: 90,
             child: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded,color: Colors.white,),
               onPressed: _navigateBackward,
@@ -100,7 +100,7 @@ class _CheckeligibilityState extends State<Checkeligibility> {
           ),
           Positioned(
             top: 25,
-            right: 130,
+            right: 90,
             child: IconButton(
               icon: const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white,),
               onPressed: _navigateForward,
@@ -118,7 +118,7 @@ class _CheckeligibilityState extends State<Checkeligibility> {
             ),
           ),
           Positioned(
-            top: 130,
+            top: 140,
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 350),
               transitionBuilder: (Widget child, Animation<double> animation) {
