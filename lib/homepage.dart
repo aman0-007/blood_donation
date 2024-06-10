@@ -1,4 +1,5 @@
 import 'package:blood_donor/checkeligibility.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,13 +10,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
 
-  final List<String> imageAssets = [
-    "assets/imgforsliderview.png",
-    "assets/imageforslider2.png",
+  final List<String> images = [
+    'assets/imageforslider2.png',
+    'assets/imgforsliderview.png',
   ];
 
-  final List<String> titles = [
+  final List<String> texts = [
     '"The measure of life is not its DURATION but its DONATION"',
     '"A bottle of blood saved my life. Was it yours?"',
   ];
@@ -54,51 +56,124 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(height: 25,),
+            Container(
+              height: 200, // Adjusted height
+              decoration: BoxDecoration(
+                color: Color(0xFFF5EFED), // Background color of the container
+                borderRadius: BorderRadius.circular(20.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 1,
+                    offset: const Offset(0, 2), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: CarouselSlider.builder(
+                itemCount: images.length,
+                options: CarouselOptions(
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 3),
+                  enlargeCenterPage: true,
+                  viewportFraction: 1,
+                  onPageChanged: (index, _) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                ),
+                itemBuilder: (BuildContext context, int index, _) {
+                  // Text Style for each page
+                  List<TextStyle> textStyles = [
+                    const TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    const TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    )
+                  ];
+                  return Container(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20.0),
+                              bottomLeft: Radius.circular(20.0),
+                            ),
+                            child: Image.asset(
+                              images[index],
+                              fit: BoxFit.contain,
+                              height: 150,
+                              width: 80,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(16.0),
+                            color: Colors.transparent, // Text background color with opacity
+                            child: Text(
+                              texts[index],
+                              style: textStyles[index % textStyles.length],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 45,vertical: 5),
-                    child: Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            color: Colors.yellowAccent,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 3,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
-                              )
-                            ]
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Row(
-                            children: [
-                              const Text(
-                                "Check your eligibility to Donate",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                icon: const Icon(Icons.arrow_forward_ios_rounded),
-                                color: Colors.black,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const Checkeligibility()), // Replace RequestPage with your actual request page
-                                  );
-                                },
-                              ),
-                            ],
+                    padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 5),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(40),
+                        color: Colors.yellowAccent,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 3,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
                           ),
-
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          children: [
+                            const Text(
+                              "Check your eligibility to Donate",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              icon: const Icon(Icons.arrow_forward_ios_rounded),
+                              color: Colors.black,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const Checkeligibility()),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -106,51 +181,47 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 3,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ]
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 3,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 45,bottom: 45,left: 20,right: 40),
-                                child: Image.asset(
-                                  "assets/blooddonationlocation.png",
-                                  width: 70,
-                                  height: 70,
-                                ),
-                              ),
+                        Container(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 45, bottom: 45, left: 20, right: 40),
+                            child: Image.asset(
+                              "assets/blooddonationlocation.png",
+                              width: 70,
+                              height: 70,
                             ),
-                            const Padding(
-                              padding: EdgeInsets.only(right: 10.0),
-                              child: Text(
-                                "Nearby donors",
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w900
-                                ),
-                              ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(right: 10.0),
+                          child: Text(
+                            "Nearby donors",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w900,
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
@@ -162,7 +233,7 @@ class _HomePageState extends State<HomePage> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
-                padding: const EdgeInsets.only(top: 8,bottom: 8,left: 30,right: 15),
+                padding: const EdgeInsets.only(top: 8, bottom: 8, left: 30, right: 15),
                 child: Row(
                   children: [
                     Padding(

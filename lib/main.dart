@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:blood_donor/accountoptionpage.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:blood_donor/bottomnavigationpage.dart';
+import 'package:blood_donor/homepage.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: "title") ,
+      home: const MyHomePage(title: "HomePage"),
     );
   }
 }
