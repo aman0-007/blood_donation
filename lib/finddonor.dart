@@ -29,6 +29,10 @@ class _FinddonorState extends State<Finddonor> {
             Container(
               decoration: const BoxDecoration(
                 color: Colors.redAccent,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
               ),
               child: Column(
                 children: [

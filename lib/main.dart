@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:blood_donor/accountoptionpage.dart';
+import 'package:blood_donor/bloodinfo.dart';
 import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/homepage.dart';
+import 'package:blood_donor/profile.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: "HomePage"),
+      home: MyHomePage(title:"My HomePage"),
     );
   }
 }
