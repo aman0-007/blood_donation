@@ -1,9 +1,5 @@
 import 'dart:async';
 import 'package:blood_donor/accountoptionpage.dart';
-import 'package:blood_donor/bloodinfo.dart';
-import 'package:blood_donor/bottomnavigationpage.dart';
-import 'package:blood_donor/homepage.dart';
-import 'package:blood_donor/profile.dart';
 import 'package:flutter/material.dart';
 
 void main() {
