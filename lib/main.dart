@@ -1,12 +1,21 @@
 import 'dart:async';
 import 'package:blood_donor/accountoptionpage.dart';
-import 'package:blood_donor/bloodinfo.dart';
-import 'package:blood_donor/bottomnavigationpage.dart';
-import 'package:blood_donor/homepage.dart';
-import 'package:blood_donor/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+        apiKey: "AIzaSyDoiveEpfXmkicpxhEsmkN5vp0LqLr0UuI",
+        authDomain: "blood-donation-4e3b1.firebaseapp.com",
+        projectId: "blood-donation-4e3b1",
+        storageBucket: "blood-donation-4e3b1.appspot.com",
+        messagingSenderId: "934563171285",
+        appId: "1:934563171285:web:a9cc8080c3a9cd70e94b5c"
+    ),
+  );
   runApp(const MyApp());
 }
 
