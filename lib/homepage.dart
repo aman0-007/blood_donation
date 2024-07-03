@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<String> texts = [
     '"The measure of life is not its DURATION but its DONATION"',
-    '"A bottle of blood saved my life. Was it yours?"',
+    '"A bottle of blood saved my life.               Was it yours?"',
   ];
 
   @override
