@@ -41,52 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB84aT71-3pCNPBAzFydl9eC52Ocb9OqPo',
-    appId: '1:274695880965:web:6088a21534a2974ca9376c',
-    messagingSenderId: '274695880965',
-    projectId: 'pshg-7c178',
-    authDomain: 'pshg-7c178.firebaseapp.com',
-    storageBucket: 'pshg-7c178.appspot.com',
-    measurementId: 'G-LM9XJRK9M7',
+    apiKey: 'AIzaSyDoiveEpfXmkicpxhEsmkN5vp0LqLr0UuI',
+    appId: '1:934563171285:web:a9cc8080c3a9cd70e94b5c',
+    messagingSenderId: '934563171285',
+    projectId: 'blood-donation-4e3b1',
+    authDomain: 'blood-donation-4e3b1.firebaseapp.com',
+    storageBucket: 'blood-donation-4e3b1.appspot.com',
+    measurementId: 'G-JXM7V616CZ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA84GhbV4JPbdskZ_Y8TMTjCC_hJM0rGqo',
-    appId: '1:274695880965:android:8b985efc98c43b3ba9376c',
-    messagingSenderId: '274695880965',
-    projectId: 'pshg-7c178',
-    storageBucket: 'pshg-7c178.appspot.com',
+    apiKey: 'AIzaSyBJWumXucR2XoEapTLNSAbgsHMtBWUlP6U',
+    appId: '1:934563171285:android:4f7e4747532c1630e94b5c',
+    messagingSenderId: '934563171285',
+    projectId: 'blood-donation-4e3b1',
+    storageBucket: 'blood-donation-4e3b1.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC-00ilW7Z2J8G-8D1m9H4OLYRsn-pIaZM',
-    appId: '1:274695880965:ios:03dd1e4d149fa51aa9376c',
-    messagingSenderId: '274695880965',
-    projectId: 'pshg-7c178',
-    storageBucket: 'pshg-7c178.appspot.com',
-    androidClientId: '274695880965-iahrqimd9nt2qt1pd2ce4kg28v065v0t.apps.googleusercontent.com',
-    iosClientId: '274695880965-er7t23a6seb4g9hgp4t8bpegg0mikrbf.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAkbceaRCHOX6kS2lEbltMkEm3fQMdFgXo',
+    appId: '1:934563171285:ios:81bfa250c1ba298ae94b5c',
+    messagingSenderId: '934563171285',
+    projectId: 'blood-donation-4e3b1',
+    storageBucket: 'blood-donation-4e3b1.appspot.com',
     iosBundleId: 'com.example.bloodDonor',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC-00ilW7Z2J8G-8D1m9H4OLYRsn-pIaZM',
-    appId: '1:274695880965:ios:03dd1e4d149fa51aa9376c',
-    messagingSenderId: '274695880965',
-    projectId: 'pshg-7c178',
-    storageBucket: 'pshg-7c178.appspot.com',
-    androidClientId: '274695880965-iahrqimd9nt2qt1pd2ce4kg28v065v0t.apps.googleusercontent.com',
-    iosClientId: '274695880965-er7t23a6seb4g9hgp4t8bpegg0mikrbf.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAkbceaRCHOX6kS2lEbltMkEm3fQMdFgXo',
+    appId: '1:934563171285:ios:81bfa250c1ba298ae94b5c',
+    messagingSenderId: '934563171285',
+    projectId: 'blood-donation-4e3b1',
+    storageBucket: 'blood-donation-4e3b1.appspot.com',
     iosBundleId: 'com.example.bloodDonor',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyB84aT71-3pCNPBAzFydl9eC52Ocb9OqPo',
-    appId: '1:274695880965:web:5c3fafc924e22a65a9376c',
-    messagingSenderId: '274695880965',
-    projectId: 'pshg-7c178',
-    authDomain: 'pshg-7c178.firebaseapp.com',
-    storageBucket: 'pshg-7c178.appspot.com',
-    measurementId: 'G-7TQ6M96MNP',
+    apiKey: 'AIzaSyDoiveEpfXmkicpxhEsmkN5vp0LqLr0UuI',
+    appId: '1:934563171285:web:772d2c719dd9dd12e94b5c',
+    messagingSenderId: '934563171285',
+    projectId: 'blood-donation-4e3b1',
+    authDomain: 'blood-donation-4e3b1.firebaseapp.com',
+    storageBucket: 'blood-donation-4e3b1.appspot.com',
+    measurementId: 'G-DLYMP8TRVY',
   );
+
 }
