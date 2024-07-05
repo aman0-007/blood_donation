@@ -1,3 +1,4 @@
+import 'package:blood_donor/authentication.dart';
 import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/register.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool _obscureText = true; // Moved the _obscureText variable to the state
+  final Authentication _authentication = Authentication();
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -147,35 +149,40 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 39.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.grey.withOpacity(0.5),
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 2,
-                            offset: const Offset(0, 1),
+                    child: GestureDetector(
+                      onTap: () {
+                        _authentication.signInWithGoogle();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.5),
                           ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 3),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset('assets/icongoogle.png'),
-                            const Text(
-                              "Sign in with Google",
-                              style: TextStyle(
-                                color: Colors.grey,
-                              ),
-                            )
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
                           ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 3),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Image.asset('assets/icongoogle.png'),
+                              const Text(
+                                "Sign in with Google",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
