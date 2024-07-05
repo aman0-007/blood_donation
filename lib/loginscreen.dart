@@ -1,6 +1,8 @@
+import 'package:blood_donor/authentication.dart';
 import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/register.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,6 +12,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final Authentication _authentication = Authentication();
   bool _obscureText = true;
 
   @override
@@ -172,7 +175,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Image.asset('assets/icongoogle.png'),
+                              GestureDetector(
+                                  onTap: () async {
+                                    User? user = await _authentication.signInWithGoogle(context);
+                                  },
+                                  child: Image.asset('assets/icongoogle.png')),
                               const Text(
                                 "Sign in with Google",
                                 style: TextStyle(

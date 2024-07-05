@@ -1,5 +1,8 @@
+import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/loginscreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:blood_donor/authentication.dart';
 
 class RegisteScreen extends StatefulWidget {
   const RegisteScreen({super.key});
@@ -9,12 +12,25 @@ class RegisteScreen extends StatefulWidget {
 }
 
 class _RegisteScreenState extends State<RegisteScreen> {
+  final Authentication _authentication = Authentication();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+
+  bool _validateEmail(String email) {
+    RegExp emailRegExp = RegExp(
+        r'^[a-zA-Z0-9._%+-]+@(gmail\.com|outlook\.com|ves\.ac\.in)$');
+    return emailRegExp.hasMatch(email);
+  }
+
+  bool _validatePassword(String password) {
+    RegExp passwordRegExp = RegExp(
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$&*])(.{8,})$');
+    return passwordRegExp.hasMatch(password);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +47,7 @@ class _RegisteScreenState extends State<RegisteScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      "Welcome Back!",
+                      "Hello, Join Us!",
                       style: TextStyle(
                         color: Color(0xFF7E0202),
                         fontSize: 30.0,
@@ -60,6 +76,7 @@ class _RegisteScreenState extends State<RegisteScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: TextField(
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                 ),
               ),
               const Row(
@@ -138,8 +155,71 @@ class _RegisteScreenState extends State<RegisteScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 70.0,right:70,top: 45,bottom: 30),
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+                        onPressed: () async {
+                          String email = _emailController.text;
+                          String password = _passwordController.text;
+                          String confirmPassword = _confirmPasswordController.text;
+
+                          if (_validateEmail(email) &&
+                              _validatePassword(password) && password == confirmPassword) {
+                            try {
+                              await _authentication.registerWithEmailAndPassword(context,email, password);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Registeration Successful')),
+                              );
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Bottomnavigationpage()),
+                              );
+                            } catch (e) {
+                              if (e is FirebaseAuthException) {
+                                switch (e.code) {
+                                  case 'email-already-in-use':
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('This email is already registered.')),
+                                    );
+                                    break;
+                                  case 'weak-password':
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Password is too weak. Please choose a stronger password.')),
+                                    );
+                                    break;
+                                  case 'invalid-email':
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Please enter a valid email address.')),
+                                    );
+                                    break;
+                                  default:
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Registration failed. Please try again later.')),
+                                    );
+                                }
+                              } else {
+                                // Other errors
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Registration failed. Please try again later.')),
+                                );
+                              }
+                            }
+                          } else {
+
+                            String errorMessage = 'Please correct the following:\n';
+                            if (!_validateEmail(email)) {
+                              errorMessage +=
+                              '- Email should be a valid Gmail, Outlook, or VES domain address.\n';
+                            }
+                            if (!_validatePassword(password)) {
+                              errorMessage +=
+                              '- Password must contain at least 8 characters including at least one uppercase letter, one lowercase letter, one number, and one special character.\n';
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(errorMessage),
+                                backgroundColor: Colors.red,
+                                duration: const Duration(seconds: 5),
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),

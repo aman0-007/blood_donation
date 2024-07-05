@@ -1,24 +1,18 @@
 import 'dart:async';
 import 'package:blood_donor/accountoptionpage.dart';
-import 'package:blood_donor/bottomnavigationpage.dart';
-import 'package:blood_donor/donorhealthdetails.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: FirebaseOptions(
-        apiKey: "AIzaSyDoiveEpfXmkicpxhEsmkN5vp0LqLr0UuI",
-        authDomain: "blood-donation-4e3b1.firebaseapp.com",
-        projectId: "blood-donation-4e3b1",
-        storageBucket: "blood-donation-4e3b1.appspot.com",
-        messagingSenderId: "934563171285",
-        appId: "1:934563171285:web:a9cc8080c3a9cd70e94b5c"
-    ),
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
