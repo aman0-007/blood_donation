@@ -1,4 +1,3 @@
-import 'package:blood_donor/authentication.dart';
 import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/register.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final Authentication _authentication = Authentication();
   bool _obscureText = true;
 
   @override
@@ -151,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 39.0),
                     child: GestureDetector(
                       onTap: () {
-                        _authentication.signInWithGoogle();
+                        // will be added
                       },
                       child: Container(
                         decoration: BoxDecoration(
