@@ -1,8 +1,7 @@
 import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/loginscreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:blood_donor/authentication.dart';
+
 
 class RegisteScreen extends StatefulWidget {
   const RegisteScreen({super.key});
@@ -12,7 +11,7 @@ class RegisteScreen extends StatefulWidget {
 }
 
 class _RegisteScreenState extends State<RegisteScreen> {
-  final Authentication _authentication = Authentication();
+  //final Authentication _authentication = Authentication();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
@@ -163,7 +162,7 @@ class _RegisteScreenState extends State<RegisteScreen> {
                           if (_validateEmail(email) &&
                               _validatePassword(password) && password == confirmPassword) {
                             try {
-                              await _authentication.registerWithEmailAndPassword(context,email, password);
+                              //await _authentication.registerWithEmailAndPassword(context,email, password);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Registeration Successful')),
                               );
@@ -172,34 +171,8 @@ class _RegisteScreenState extends State<RegisteScreen> {
                                 MaterialPageRoute(builder: (context) => const Bottomnavigationpage()),
                               );
                             } catch (e) {
-                              if (e is FirebaseAuthException) {
-                                switch (e.code) {
-                                  case 'email-already-in-use':
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('This email is already registered.')),
-                                    );
-                                    break;
-                                  case 'weak-password':
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Password is too weak. Please choose a stronger password.')),
-                                    );
-                                    break;
-                                  case 'invalid-email':
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Please enter a valid email address.')),
-                                    );
-                                    break;
-                                  default:
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Registration failed. Please try again later.')),
-                                    );
-                                }
-                              } else {
-                                // Other errors
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Registration failed. Please try again later.')),
-                                );
-                              }
+                              //
+
                             }
                           } else {
 
