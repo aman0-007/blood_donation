@@ -6,7 +6,7 @@
 // class Authentication {
 //   final FirebaseAuth _auth = FirebaseAuth.instance;
 //   final GoogleSignIn googleSignIn = GoogleSignIn(
-//     clientId: '934563171285-vk8h2pft0j81idildiikjtm2ht7ef11p.apps.googleusercontent.com',
+//     clientId: '',
 //     scopes: [
 //       'email',
 //       'profile',
