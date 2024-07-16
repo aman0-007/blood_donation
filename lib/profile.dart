@@ -1,13 +1,45 @@
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:blood_donor/authentication.dart';
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final Authentication _auth = Authentication();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController dobController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot<Map<String, dynamic>> userData =
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (userData.exists) {
+        setState(() {
+          nameController.text = userData['name'];
+          genderController.text = userData['gender'];
+          emailController.text = userData['email'];
+          phoneController.text = userData['phone'];
+          dobController.text = userData['dob'];
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,13 +60,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3, // Spread radius
-                      blurRadius: 7, // Blur radius
-                      offset: Offset(0, 3), // Offset shadow vertically by 3 units
+                      spreadRadius: 3,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                padding: EdgeInsets.all(16.0), // Padding inside the Container
+                padding: const EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -42,57 +74,71 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/life_saved.png', // Replace with your image path
+                          'assets/life_saved.png',
                           width: MediaQuery.of(context).size.width * 0.07,
                           height: MediaQuery.of(context).size.height * 0.07,
                         ),
-                        SizedBox(height: 8), // Space between widgets
-                        Text("3",style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),),
-                        Text("Life saved",style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),
-                        )
+                        const SizedBox(height: 8),
+                        const Text(
+                          "3",
+                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                        ),
+                        const Text(
+                          "Life saved",
+                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/blood_group.png', // Replace with your image path
+                          'assets/blood_group.png',
                           width: MediaQuery.of(context).size.width * 0.07,
                           height: MediaQuery.of(context).size.height * 0.07,
                         ),
-                        SizedBox(height: 8), // Space between widgets
-                        Text("B+",style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),),
-                        Text("Blood Group",style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "B+",
+                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                        ),
+                        const Text(
+                          "Blood Group",
+                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
-
-              const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 40,top: 20),
-                  child: Text(
-                    "Name",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-              const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(),
-            ),
+              const SizedBox(height: 20),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 40,top: 20),
+                    padding: EdgeInsets.only(left: 40, top: 20),
+                    child: Text(
+                      "Name",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: TextField(
+                  controller: nameController,
+                  readOnly: true, // Disable editing
+                ),
+              ),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 40, top: 20),
                     child: Text(
                       "Gender",
                       style: TextStyle(
@@ -103,15 +149,18 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: TextField(
+                  controller: genderController,
+                  readOnly: true, // Disable editing
+                ),
               ),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 40,top: 20),
+                    padding: EdgeInsets.only(left: 40, top: 20),
                     child: Text(
                       "Email",
                       style: TextStyle(
@@ -122,15 +171,18 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: TextField(
+                  controller: emailController,
+                  readOnly: true, // Disable editing
+                ),
               ),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 40,top: 20),
+                    padding: EdgeInsets.only(left: 40, top: 20),
                     child: Text(
                       "Phone",
                       style: TextStyle(
@@ -141,15 +193,18 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: TextField(
+                  controller: phoneController,
+                  readOnly: true, // Disable editing
+                ),
               ),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 40,top: 20),
+                    padding: EdgeInsets.only(left: 40, top: 20),
                     child: Text(
                       "Date of Birth",
                       style: TextStyle(
@@ -160,10 +215,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: TextField(
+                  controller: dobController,
+                  readOnly: true, // Disable editing
+                ),
               ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  _auth.signOut(context); // Call sign-out function from Authentication class
+                },
+                child: const Text('Sign Out'),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -171,4 +237,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-

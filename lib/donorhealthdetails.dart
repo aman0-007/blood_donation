@@ -87,7 +87,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hasDiabetes,
                           onChanged: (value) {
                             setState(() {
-                              _hasDiabetes = value as bool?;
+                              _hasDiabetes = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -103,7 +103,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hasDiabetes,
                           onChanged: (value) {
                             setState(() {
-                              _hasDiabetes = value as bool?;
+                              _hasDiabetes = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -124,9 +124,11 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        "Have you ever had problems with your heart or lungs?",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                      Flexible(
+                        child: Text(
+                          "Have you ever had problems with your heart or lungs?",
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                        ),
                       ),
                     ],
                   ),
@@ -142,7 +144,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _heartOrLungProblems,
                           onChanged: (value) {
                             setState(() {
-                              _heartOrLungProblems = value as bool?;
+                              _heartOrLungProblems = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -158,7 +160,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _heartOrLungProblems,
                           onChanged: (value) {
                             setState(() {
-                              _heartOrLungProblems = value as bool?;
+                              _heartOrLungProblems = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -197,7 +199,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hadCovid19,
                           onChanged: (value) {
                             setState(() {
-                              _hadCovid19 = value as bool?;
+                              _hadCovid19 = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -213,7 +215,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hadCovid19,
                           onChanged: (value) {
                             setState(() {
-                              _hadCovid19 = value as bool?;
+                              _hadCovid19 = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -234,9 +236,11 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        "Have you ever had a positive test for HIV/AIDS virus?",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                      Flexible(
+                        child: Text(
+                          "Have you ever had a positive test for HIV/AIDS virus?",
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                        ),
                       ),
                     ],
                   ),
@@ -252,7 +256,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hivAidsPositive,
                           onChanged: (value) {
                             setState(() {
-                              _hivAidsPositive = value as bool?;
+                              _hivAidsPositive = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -268,7 +272,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hivAidsPositive,
                           onChanged: (value) {
                             setState(() {
-                              _hivAidsPositive = value as bool?;
+                              _hivAidsPositive = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -307,7 +311,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hadCancer,
                           onChanged: (value) {
                             setState(() {
-                              _hadCancer = value as bool?;
+                              _hadCancer = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -323,7 +327,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hadCancer,
                           onChanged: (value) {
                             setState(() {
-                              _hadCancer = value as bool?;
+                              _hadCancer = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -362,7 +366,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hadVaccination,
                           onChanged: (value) {
                             setState(() {
-                              _hadVaccination = value as bool?;
+                              _hadVaccination = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -378,7 +382,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           groupValue: _hadVaccination,
                           onChanged: (value) {
                             setState(() {
-                              _hadVaccination = value as bool?;
+                              _hadVaccination = value;
                             });
                           },
                           activeColor: Colors.redAccent,
@@ -402,13 +406,13 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           child: Image.asset(_isVerified ? "assets/verified.png" : "assets/verify.png",)
                       ),
                       SizedBox(width: deviceWidth*0.007,),
-                      Text("By clicking you agree to our terms and condition",style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),),
+                      Flexible(child: Text("By clicking you agree to our terms and condition",style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),)),
 
                     ],
                   ),
                 ),
 
-                SizedBox(height: deviceHeight * 0.045),
+                SizedBox(height: deviceHeight * 0.01),
                 Padding(
                   padding: EdgeInsets.only(left: deviceWidth * 0.02, right: deviceWidth * 0.02),
                   child: Row(

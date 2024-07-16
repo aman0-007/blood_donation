@@ -1,5 +1,4 @@
 import 'package:blood_donor/authentication.dart';
-import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/register.dart';
 import 'package:flutter/material.dart';
 
@@ -12,18 +11,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  //final Authentication _authentication = Authentication();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final Authentication _authentication = Authentication();
   bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
+    final deviceHeight =MediaQuery.of(context).size.height;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 55,),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40),
                 child: Row(
@@ -54,9 +55,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(),
+                child: TextField(
+                  controller: emailController,
+                ),
               ),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -76,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: TextField(
+                  controller: passwordController,
                   obscureText: _obscureText,
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
@@ -115,7 +119,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 70.0),
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const Bottomnavigationpage()));
+                          String email = emailController.text;
+                          String password = passwordController.text;
+                          _authentication.signInWithEmailAndPassword(context, email, password);
+                          //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const Bottomnavigationpage()));
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
@@ -177,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               GestureDetector(
                                   onTap: () async {
-                                    //User? user = await _authentication.signInWithGoogle(context);
+                                    await _authentication.signInWithGoogle(context);
                                   },
                                   child: Image.asset('assets/icongoogle.png')),
                               const Text(

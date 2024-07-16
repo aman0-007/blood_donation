@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:blood_donor/accountoptionpage.dart';
+import 'package:blood_donor/bottomnavigationpage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:blood_donor/authentication.dart';
 
 
-
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Initialize Firebase
   runApp(const MyApp());
 }
 
@@ -39,7 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const AccountOptionPage()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => AuthWrapper(
+        home: Bottomnavigationpage(), // Replace with your home page
+        login: AccountOptionPage(), // Replace with your login page
+      ),));
     });
   }
 
