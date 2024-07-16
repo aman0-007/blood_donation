@@ -1,3 +1,4 @@
+import 'package:blood_donor/hospitallogin.dart';
 import 'package:blood_donor/loginscreen.dart';
 import 'package:blood_donor/main.dart';
 import 'package:blood_donor/register.dart';
@@ -37,7 +38,7 @@ class _AccountOptionPageState extends State<AccountOptionPage> {
                   IconButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => const MyHomePage(title: "Homepage"),
+                        builder: (_) => const Hospitallogin(),
                       ));
                     },
                     icon: const Icon(Icons.arrow_forward),

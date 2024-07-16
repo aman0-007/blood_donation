@@ -3,6 +3,7 @@ import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/loginscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -60,6 +61,31 @@ class Authentication {
         'dob': dob,
         'gender': gender,
         'phone': phone,
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to register')),
+      );
+    }
+  }
+
+  Future<void> registerHospitalWithEmailAndPassword(BuildContext context,String name, String email, String password, Position currentPosition) async {
+    try {
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration successful')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      await FirebaseFirestore.instance.collection('hospital').doc('bloodbanks').collection('Hospital').doc(userCredential.user?.uid).set({
+        'email': email,
+        'name' : name,
+        'currentPosition':GeoPoint(currentPosition.latitude, currentPosition.longitude),
       });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(

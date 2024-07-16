@@ -1,46 +1,29 @@
 import 'package:blood_donor/authentication.dart';
+import 'package:blood_donor/location.dart';
 import 'package:blood_donor/loginscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 
-class RegisteScreen extends StatefulWidget {
-  const RegisteScreen({super.key});
+class Hospitallogin extends StatefulWidget {
+  const Hospitallogin({super.key});
 
   @override
-  State<RegisteScreen> createState() => _RegisteScreenState();
+  State<Hospitallogin> createState() => _HospitalloginState();
 }
 
-class _RegisteScreenState extends State<RegisteScreen> {
+class _HospitalloginState extends State<Hospitallogin> {
   final Authentication _authentication = Authentication();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  TextEditingController dobController = TextEditingController();
-  TextEditingController genderController = TextEditingController();
-  //blood group
-  //home location
 
+  final ULocation _locationService = ULocation();
+  Position? _currentPosition;
 
-  String? selectedGender;
-  DateTime? selectedDOB;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-
-  Future<DateTime?> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDOB ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null && picked != selectedDOB) {
-      return picked;
-    }
-    return selectedDOB;
-  }
-
 
   bool _validateEmail(String email) {
     RegExp emailRegExp = RegExp(
@@ -61,9 +44,9 @@ class _RegisteScreenState extends State<RegisteScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 25,),
+            const SizedBox(height: 45,),
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40),
+              padding: EdgeInsets.symmetric(horizontal: 40,),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -84,7 +67,7 @@ class _RegisteScreenState extends State<RegisteScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 40,top: 40),
                   child: Text(
-                    "Name",
+                    "Hospital Name",
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 12,
@@ -100,161 +83,46 @@ class _RegisteScreenState extends State<RegisteScreen> {
                 keyboardType: TextInputType.emailAddress,
               ),
             ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 40,top: 30),
-                  child: Text(
-                    "Gender",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
+            const SizedBox(height: 10.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 40.0, top: 20.0,right: 40),
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  try {
+                    // Fetch current location
+                    await _locationService.getCurrentLocation((Position position){
+                      setState(() {
+                        _currentPosition = position;
+                      });
+                    });
+
+                    // Optionally, provide feedback to the user
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Location fetched successfully')));
+
+                  } on Exception catch (e) {
+                    print('Error fetching location: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Failed to fetch location')));
+                  }
+                },
+                icon: const Icon(Icons.location_on),
+                label: const Text('Select Location'),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.blueAccent), // Background color
+                  foregroundColor: WidgetStateProperty.all<Color>(Colors.white), // Text color
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0),
                     ),
+                  ),
+                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                  ),
+                  minimumSize: WidgetStateProperty.all<Size>(
+                    const Size(double.infinity, 0), // full width available
                   ),
                 ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 34,),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedGender = 'Male';
-                        genderController.text= 'Male';
-                      });
-                    },
-                    child: Container(
-                      width: 100,
-                      height: 50,
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: selectedGender == 'Male' ? Colors.red.withOpacity(0.5) : Colors.grey,
-                          width: 1.5,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Male',
-                          style: TextStyle(
-                            color: selectedGender == 'Male' ? Colors.red.withOpacity(0.8) : Colors.grey,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedGender = 'Female';
-                        genderController.text = 'Female';
-                      });
-                    },
-                    child: Container(
-                      width: 100,
-                      height: 50,
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: selectedGender == 'Female' ? Colors.red.withOpacity(0.5) : Colors.grey,
-                          width: 1.5,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Female',
-                          style: TextStyle(
-                            color: selectedGender == 'Female' ? Colors.red.withOpacity(0.8) : Colors.grey,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 15,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "DOB",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      DateTime? pickedDate = await _selectDate(context);
-                      if (pickedDate != null) {
-                        setState(() {
-                          selectedDOB = pickedDate;
-                          dobController.text =
-                          "${selectedDOB!.day}/${selectedDOB!.month}/${selectedDOB!.year}";
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: 50,
-                      margin: const EdgeInsets.only(top: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: selectedDOB != null ? Colors.red.withOpacity(0.5) : Colors.grey,
-                          width: 1.5,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            selectedDOB != null
-                                ? "${selectedDOB!.day}/${selectedDOB!.month}/${selectedDOB!.year}"
-                                : 'Select Date',
-                            style: TextStyle(
-                              color: selectedDOB != null ? Colors.red.withOpacity(0.8) : Colors.grey,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Icon(Icons.calendar_today),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 40,top: 30),
-                  child: Text(
-                    "Phone Number",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
-                controller: _phoneController,
-                keyboardType: TextInputType.emailAddress,
               ),
             ),
             const Row(
@@ -263,7 +131,7 @@ class _RegisteScreenState extends State<RegisteScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 40,top: 20),
                   child: Text(
-                    "E-mail/Phone Number",
+                    "E-mail",
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 12,
@@ -358,15 +226,12 @@ class _RegisteScreenState extends State<RegisteScreen> {
                       onPressed: () async {
                         String name = nameController.text;
                         String email = _emailController.text;
-                        String phone = _phoneController.text;
                         String password = _passwordController.text;
                         String confirmPassword = _confirmPasswordController.text;
-                        String dob = dobController.text.trim();
-                        String gender = genderController.text.trim();
                         if (_validateEmail(email) &&
                             _validatePassword(password) && password == confirmPassword) {
                           try {
-                            _authentication.registerWithEmailAndPassword(context, name, email, password,dob,gender, phone);
+                            _authentication.registerHospitalWithEmailAndPassword(context, name, email, password,_currentPosition!);
                           } catch (e) {
                           }
                         } else {
@@ -430,9 +295,9 @@ class _RegisteScreenState extends State<RegisteScreen> {
                   GestureDetector(
                     onTap: (){
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const LoginScreen()
-                          ),
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginScreen()
+                        ),
                       );
                     },
                     child: const Text(
