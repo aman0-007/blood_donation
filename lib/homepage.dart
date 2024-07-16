@@ -1,3 +1,4 @@
+import 'package:blood_donor/bloodbanks.dart';
 import 'package:blood_donor/bloodinfo.dart';
 import 'package:blood_donor/checkeligibility.dart';
 import 'package:blood_donor/donorhealthdetails.dart';
@@ -292,43 +293,51 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    Padding(
-                      padding: const EdgeInsets.only(right: 30.0),
-                      child: SizedBox(
-                        width: 150,
-                        height: 150,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.grey.withOpacity(0.5), // Border color
-                              width: 1, // Border width
-                            ),
-                            borderRadius: BorderRadius.circular(10), // Border radius
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1), // Shadow color
-                                spreadRadius: 1, // Spread radius
-                                blurRadius: 2, // Blur radius
-                                offset: const Offset(0, 2), // Offset
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Bloodbanks()),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 30.0),
+                        child: SizedBox(
+                          width: 150,
+                          height: 150,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.5), // Border color
+                                width: 1, // Border width
                               ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset("assets/blood-bank.png"),
-                                const SizedBox(height: 7),
-                                const Text(
-                                  "Blood Banks",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              borderRadius: BorderRadius.circular(10), // Border radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1), // Shadow color
+                                  spreadRadius: 1, // Spread radius
+                                  blurRadius: 2, // Blur radius
+                                  offset: const Offset(0, 2), // Offset
                                 ),
                               ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/blood-bank.png"),
+                                  const SizedBox(height: 7),
+                                  const Text(
+                                    "Blood Banks",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
