@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "587619807474",
+    "project_id": "liquidlove-8d454",
+    "storage_bucket": "liquidlove-8d454.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587619807474:android:aec1873eca9c443a05e06b",
+        "android_client_info": {
+          "package_name": "com.example.blood_donor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJNlMj0eJJl8mWUmeJuibCK3vS92L3zjk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
