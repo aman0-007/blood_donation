@@ -81,7 +81,7 @@ class _BloodbanksState extends State<Bloodbanks> {
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: Colors.grey[250],
                         borderRadius: BorderRadius.circular(8.0),
                         border: Border.all(color: Colors.redAccent),
                       ),
