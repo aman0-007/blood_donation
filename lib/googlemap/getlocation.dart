@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
-void main() {
-  runApp(MaterialApp(
-    home: Getlocation(),
-  ));
-}
 
 class Getlocation extends StatefulWidget {
   const Getlocation({Key? key}) : super(key: key);
@@ -17,10 +13,9 @@ class Getlocation extends StatefulWidget {
 
 class _GetlocationState extends State<Getlocation> {
   late GoogleMapController mapController;
-  LatLng _center = const LatLng(
-      45.521563, -122.677433); // Default center (Portland, OR)
-  LatLng _lastMapPosition = const LatLng(
-      45.521563, -122.677433); // Default position to save
+  LatLng _center = const LatLng(45.521563, -122.677433); // Default center
+  LatLng _lastMapPosition = const LatLng(45.521563, -122.677433); // Default position
+  String _address = ""; // Variable to store address
 
   @override
   void initState() {
@@ -32,9 +27,15 @@ class _GetlocationState extends State<Getlocation> {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    Placemark placemark = placemarks[0];
     setState(() {
       _center = LatLng(position.latitude, position.longitude);
       _lastMapPosition = LatLng(position.latitude, position.longitude);
+      _address = "${placemark.name}, ${placemark.locality}, ${placemark.postalCode}, ${placemark.country}";
     });
   }
 
@@ -49,8 +50,8 @@ class _GetlocationState extends State<Getlocation> {
   }
 
   void _saveLocation() {
-    // Implement your save location logic here (e.g., save _lastMapPosition to storage)
     print('Saved location: $_lastMapPosition');
+    print('Address: $_address'); // Print the address when saved
   }
 
   @override
@@ -70,7 +71,7 @@ class _GetlocationState extends State<Getlocation> {
         onCameraMove: _onCameraMove,
         initialCameraPosition: CameraPosition(
           target: _center,
-          zoom: 40.0,
+          zoom: 15.0,
         ),
         myLocationEnabled: true,
         compassEnabled: true,
