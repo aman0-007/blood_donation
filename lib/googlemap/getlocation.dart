@@ -70,7 +70,7 @@ class _GetlocationState extends State<Getlocation> {
         onCameraMove: _onCameraMove,
         initialCameraPosition: CameraPosition(
           target: _center,
-          zoom: 50.0,
+          zoom: 40.0,
         ),
         myLocationEnabled: true,
         compassEnabled: true,
