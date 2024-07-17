@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:blood_donor/accountoptionpage.dart';
 import 'package:blood_donor/bottomnavigationpage.dart';
-import 'package:blood_donor/hospital%20dashboard.dart';
-import 'package:blood_donor/register.dart';
+import 'package:blood_donor/googlemap/getlocation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:blood_donor/authentication.dart';
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: RegisteScreen(),
+      home: Getlocation(),
     );
   }
 }
