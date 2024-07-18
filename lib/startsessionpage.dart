@@ -1,3 +1,4 @@
+import 'package:blood_donor/googlemap/getlocation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:blood_donor/authentication.dart';
@@ -11,16 +12,19 @@ class Startsessionpage extends StatefulWidget {
 }
 
 class _StartsessionpageState extends State<Startsessionpage> {
-  TimeOfDay? _startTime;
-  DateTime? _selectedDate;
-
+  final Authentication _authentication = Authentication();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _landmarkController = TextEditingController();
-  String _selectedAddress = 'Select Location';
+
+  final TextEditingController _address1Controller = TextEditingController();
+  String _selectedAddress = '';
+  TimeOfDay? _startTime;
+  DateTime? _selectedDate;
   Position? _currentPosition;
-  final Authentication _authentication = Authentication();
+
+
 
 
   void _selectTime(BuildContext context) async {
@@ -30,10 +34,11 @@ class _StartsessionpageState extends State<Startsessionpage> {
     );
     if (pickedTime != null && pickedTime != _startTime) {
       setState(() {
-        _startTime = pickedTime;
+        _startTime = pickedTime; // Only time is considered, no date component
       });
     }
   }
+
 
   void _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -44,21 +49,40 @@ class _StartsessionpageState extends State<Startsessionpage> {
     );
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
-        _selectedDate = pickedDate;
+        _selectedDate = pickedDate; // Only the date part is considered
       });
     }
   }
+
+
 
   void _startDonationSession() {
     String name = _nameController.text;
     String email = _emailController.text;
     String contact = _contactController.text;
     String landmark = _landmarkController.text;
-    String startTime = _startTime != null ? _startTime!.format(context) : '';
-    String date = _selectedDate != null ? DateFormat('dd-MM-yyyy').format(_selectedDate!) : '';
+
+    DateTime? startTime;
+    if (_startTime != null) {
+      // Convert TimeOfDay to DateTime
+      TimeOfDay timeOfDay = _startTime!;
+      DateTime now = DateTime.now();
+      startTime = DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    }
+
+    DateTime? date;
+    if (_selectedDate != null) {
+      date = _selectedDate;
+    }
 
     // Validate all fields before proceeding
-    if (name.isNotEmpty && email.isNotEmpty && contact.isNotEmpty && _currentPosition != null && _selectedAddress.isNotEmpty) {
+    if (name.isNotEmpty &&
+        email.isNotEmpty &&
+        contact.isNotEmpty &&
+        _currentPosition != null &&
+        _selectedAddress.isNotEmpty &&
+        startTime != null &&
+        date != null) {
       try {
         // Call Firebase function to save session details
         _authentication.startDonationSession(
@@ -103,9 +127,9 @@ class _StartsessionpageState extends State<Startsessionpage> {
       body: SingleChildScrollView(
         padding: EdgeInsets.all(8.0),
         child: Container(
-          color: Colors.white,
           padding: EdgeInsets.all(8.0),
           decoration: BoxDecoration(
+            color: Colors.white,
             border: Border.all(color: Colors.redAccent),
           ),
           child: Column(
@@ -142,10 +166,54 @@ class _StartsessionpageState extends State<Startsessionpage> {
                       children: [
                         Text('LOCATION'),
                         TextField(
-                          // Display location fetched from previous method
-                          enabled: false,
-                          decoration: InputDecoration(
-                            hintText: _selectedAddress,
+                          controller: _address1Controller,
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GetLocation(),
+                              ),
+                            );
+                            if (result != null) {
+                              setState(() {
+                                _currentPosition = Position(
+                                  latitude: result['position'].latitude,
+                                  longitude: result['position'].longitude,
+                                  accuracy: 0.0, // provide an appropriate accuracy value
+                                  altitude: 0.0,
+                                  heading: 0.0,
+                                  speed: 0.0,
+                                  speedAccuracy: 0.0,
+                                  timestamp: DateTime.now(),
+                                  altitudeAccuracy: 0.0,
+                                  headingAccuracy: 0.0,
+                                );
+                                _selectedAddress = result['selectedAddress'];
+                                _address1Controller.text = result['selectedAddress'];
+                              });
+                            }
+                          },
+                          icon: const Icon(Icons.location_on),
+                          label: const Text('Select Location'),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.redAccent), // Background color
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                                Colors.white), // Text color
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                            ),
+                            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                              const EdgeInsets.symmetric(
+                                  vertical: 12.0, horizontal: 16.0),
+                            ),
+                            minimumSize: MaterialStateProperty.all<Size>(
+                              const Size(double.infinity, 0), // full width available
+                            ),
                           ),
                         ),
                       ],
@@ -182,6 +250,7 @@ class _StartsessionpageState extends State<Startsessionpage> {
                           },
                           child: Text(_startTime != null ? _startTime!.format(context) : 'Select Time'),
                         ),
+
                       ],
                     ),
                   ),
@@ -197,6 +266,7 @@ class _StartsessionpageState extends State<Startsessionpage> {
                           },
                           child: Text(_selectedDate != null ? DateFormat('dd-MM-yyyy').format(_selectedDate!) : 'Select Date'),
                         ),
+
                       ],
                     ),
                   ),

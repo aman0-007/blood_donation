@@ -1,4 +1,6 @@
 import 'package:blood_donor/authentication.dart';
+import 'package:blood_donor/bottomnavigationpage.dart';
+import 'package:blood_donor/hospital%20dashboard.dart';
 import 'package:blood_donor/register.dart';
 import 'package:flutter/material.dart';
 
@@ -122,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           String email = emailController.text;
                           String password = passwordController.text;
                           _authentication.signInWithEmailAndPassword(context, email, password);
-                          //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const Bottomnavigationpage()));
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const Bottomnavigationpage()));
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
