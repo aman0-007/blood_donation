@@ -1,12 +1,14 @@
-import 'package:blood_donor/authentication.dart';
-import 'package:blood_donor/location.dart';
-import 'package:blood_donor/loginscreen.dart';
+import 'package:blood_donor/googlemap/getlocation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:blood_donor/authentication.dart';
+import 'package:blood_donor/loginscreen.dart';
+import 'package:blood_donor/location.dart';
+import 'package:blood_donor/map_screen.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Hospitallogin extends StatefulWidget {
-  const Hospitallogin({super.key});
+  const Hospitallogin({Key? key}) : super(key: key);
 
   @override
   State<Hospitallogin> createState() => _HospitalloginState();
@@ -17,10 +19,13 @@ class _HospitalloginState extends State<Hospitallogin> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+  TextEditingController();
+  final TextEditingController _address1Controller = TextEditingController();
 
   final ULocation _locationService = ULocation();
   Position? _currentPosition;
+  String _selectedAddress = '';
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -44,9 +49,13 @@ class _HospitalloginState extends State<Hospitallogin> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 45,),
+            const SizedBox(
+              height: 45,
+            ),
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40,),
+              padding: EdgeInsets.symmetric(
+                horizontal: 40,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -65,7 +74,7 @@ class _HospitalloginState extends State<Hospitallogin> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 40,top: 40),
+                  padding: EdgeInsets.only(left: 40, top: 40),
                   child: Text(
                     "Hospital Name",
                     style: TextStyle(
@@ -85,41 +94,53 @@ class _HospitalloginState extends State<Hospitallogin> {
             ),
             const SizedBox(height: 10.0),
             Padding(
-              padding: const EdgeInsets.only(left: 40.0, top: 20.0,right: 40),
+              padding: const EdgeInsets.only(
+                  left: 40.0, top: 20.0, right: 40),
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  try {
-                    // Fetch current location
-                    await _locationService.getCurrentLocation((Position position){
-                      setState(() {
-                        _currentPosition = position;
-                      });
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GetLocation(),
+                    ),
+                  );
+
+                  if (result != null) {
+                    setState(() {
+                      _currentPosition = Position(
+                        latitude: result['position'].latitude,
+                        longitude: result['position'].longitude,
+                        accuracy: 0.0, // provide an appropriate accuracy value
+                        altitude: 0.0,
+                        heading: 0.0,
+                        speed: 0.0,
+                        speedAccuracy: 0.0,
+                        timestamp: DateTime.now(),
+                        altitudeAccuracy: 0.0,
+                        headingAccuracy: 0.0,
+                      );
+                      _selectedAddress = result['selectedAddress'];
+                      _address1Controller.text = result['selectedAddress'];
                     });
-
-                    // Optionally, provide feedback to the user
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Location fetched successfully')));
-
-                  } on Exception catch (e) {
-                    print('Error fetching location: $e');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Failed to fetch location')));
                   }
                 },
                 icon: const Icon(Icons.location_on),
                 label: const Text('Select Location'),
                 style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(Colors.blueAccent), // Background color
-                  foregroundColor: WidgetStateProperty.all<Color>(Colors.white), // Text color
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Colors.redAccent), // Background color
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      Colors.white), // Text color
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
                   ),
-                  minimumSize: WidgetStateProperty.all<Size>(
+                  minimumSize: MaterialStateProperty.all<Size>(
                     const Size(double.infinity, 0), // full width available
                   ),
                 ),
@@ -129,7 +150,29 @@ class _HospitalloginState extends State<Hospitallogin> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 40,top: 20),
+                  padding: EdgeInsets.only(left: 40, top: 30),
+                  child: Text(
+                    "Address 1",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: TextField(
+                controller: _address1Controller,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 40, top: 20),
                   child: Text(
                     "E-mail",
                     style: TextStyle(
@@ -151,7 +194,7 @@ class _HospitalloginState extends State<Hospitallogin> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 40,top: 30),
+                  padding: EdgeInsets.only(left: 40, top: 30),
                   child: Text(
                     "Password",
                     style: TextStyle(
@@ -186,9 +229,9 @@ class _HospitalloginState extends State<Hospitallogin> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 40,top: 30),
+                  padding: EdgeInsets.only(left: 40, top: 30),
                   child: Text(
-                    "Conform password",
+                    "Confirm password",
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 12,
@@ -217,25 +260,37 @@ class _HospitalloginState extends State<Hospitallogin> {
                 ),
               ),
             ),
+            const SizedBox(height: 10.0),
             Row(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 70.0,right:70,top: 35,bottom: 15),
+                    padding: const EdgeInsets.only(
+                        left: 70.0, right: 70, top: 35, bottom: 15),
                     child: ElevatedButton(
                       onPressed: () async {
                         String name = nameController.text;
                         String email = _emailController.text;
                         String password = _passwordController.text;
-                        String confirmPassword = _confirmPasswordController.text;
+                        String confirmPassword =
+                            _confirmPasswordController.text;
                         if (_validateEmail(email) &&
-                            _validatePassword(password) && password == confirmPassword) {
+                            _validatePassword(password) &&
+                            password == confirmPassword &&
+                            _currentPosition != null &&
+                            _selectedAddress.isNotEmpty) {
                           try {
-                            _authentication.registerHospitalWithEmailAndPassword(context, name, email, password,_currentPosition!);
+                            _authentication.registerHospitalWithEmailAndPassword(
+                                context,
+                                name,
+                                email,
+                                password,
+                                _currentPosition!,
+                                _selectedAddress);
                           } catch (e) {
+                            print('Error: $e');
                           }
                         } else {
-
                           String errorMessage = 'Please correct the following:\n';
                           if (!_validateEmail(email)) {
                             errorMessage +=
@@ -244,6 +299,10 @@ class _HospitalloginState extends State<Hospitallogin> {
                           if (!_validatePassword(password)) {
                             errorMessage +=
                             '- Password must contain at least 8 characters including at least one uppercase letter, one lowercase letter, one number, and one special character.\n';
+                          }
+                          if (_currentPosition == null || _selectedAddress.isEmpty) {
+                            errorMessage +=
+                            '- Please select a valid location from the map.\n';
                           }
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -275,8 +334,8 @@ class _HospitalloginState extends State<Hospitallogin> {
             Text(
               "----------------------------------------------------------   OR   ----------------------------------------------------------",
               style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 10.0
+                color: Colors.grey,
+                fontSize: 10.0,
               ),
             ),
             Padding(
@@ -293,10 +352,11 @@ class _HospitalloginState extends State<Hospitallogin> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
                         ),
                       );
                     },

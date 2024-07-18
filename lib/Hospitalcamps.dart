@@ -48,7 +48,7 @@ class _HospitalcampsState extends State<Hospitalcamps> {
               ),
               child: Center(
                 child: Text(
-                  "Start Session",
+                  "Live Session",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

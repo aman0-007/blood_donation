@@ -69,7 +69,7 @@ class Authentication {
     }
   }
 
-  Future<void> registerHospitalWithEmailAndPassword(BuildContext context,String name, String email, String password, Position currentPosition) async {
+  Future<void> registerHospitalWithEmailAndPassword(BuildContext context,String name, String email, String password, Position currentPosition, String fulladdress) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -86,6 +86,7 @@ class Authentication {
         'email': email,
         'name' : name,
         'currentPosition':GeoPoint(currentPosition.latitude, currentPosition.longitude),
+        'full address' : fulladdress,
       });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -131,6 +132,7 @@ class Authentication {
     }
   }
 
+  Future<void> startDonationSession(BuildContext context, )
   User? getCurrentUser() {
     return _auth.currentUser;
   }
@@ -138,7 +140,9 @@ class Authentication {
   bool isUserLoggedIn() {
     return _auth.currentUser != null;
   }
+
 }
+
 
 class AuthWrapper extends StatelessWidget {
   final Widget home;
