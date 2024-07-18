@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:blood_donor/authentication.dart';
 import 'package:blood_donor/loginscreen.dart';
-import 'package:blood_donor/location.dart';
-import 'package:blood_donor/map_screen.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Hospitallogin extends StatefulWidget {
   const Hospitallogin({Key? key}) : super(key: key);
@@ -19,11 +16,10 @@ class _HospitalloginState extends State<Hospitallogin> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-  TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _address1Controller = TextEditingController();
 
-  final ULocation _locationService = ULocation();
+
   Position? _currentPosition;
   String _selectedAddress = '';
 
@@ -104,7 +100,6 @@ class _HospitalloginState extends State<Hospitallogin> {
                       builder: (context) => GetLocation(),
                     ),
                   );
-
                   if (result != null) {
                     setState(() {
                       _currentPosition = Position(
@@ -152,7 +147,7 @@ class _HospitalloginState extends State<Hospitallogin> {
                 Padding(
                   padding: EdgeInsets.only(left: 40, top: 30),
                   child: Text(
-                    "Address 1",
+                    "Address ",
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 12,

@@ -132,7 +132,86 @@ class Authentication {
     }
   }
 
-  Future<void> startDonationSession(BuildContext context, )
+  Future<void> startDonationSession(BuildContext context, String name, String email, String contact, Position? currentPosition, String selectedAddress, String? landmark, DateTime startTime, DateTime date,) async {
+    // Validate form fields
+    if (name.isNotEmpty &&
+        email.isNotEmpty &&
+        contact.isNotEmpty &&
+        currentPosition != null &&
+        selectedAddress.isNotEmpty) {
+      try {
+        // Get current user
+        User? currentUser = _auth.currentUser;
+
+        // Check if user is authenticated
+        if (currentUser != null) {
+          // Save session details in Firebase
+          await saveSessionDetails(currentUser, name, email, contact,
+              currentPosition, selectedAddress, landmark, startTime, date);
+
+          // Show success message or navigate to next screen
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Session started successfully!'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        } else {
+          throw Exception('User not logged in.');
+        }
+      } catch (e) {
+        print('Error starting session: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to start session. Please try again.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please fill in all required fields.'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  // Function to save session details in Firestore
+  Future<void> saveSessionDetails(User currentUser, String name, String email, String contact, Position currentPosition, String selectedAddress, String? landmark, DateTime startTime, DateTime date,) async {
+    // Firestore path
+    final firestore = FirebaseFirestore.instance;
+    final userDocRef = firestore
+        .collection('hospital')
+        .doc('bloodbanks')
+        .collection('Hospital')
+        .doc(currentUser.uid)
+        .collection('sessions')
+        .doc('active_sessions');
+    final sessionsDocRef = firestore.collection('sessions').doc(currentUser.uid).collection('active_sessions');
+
+    // Data to be saved
+    Map<String, dynamic> sessionData = {
+      'name': name,
+      'email': email,
+      'contact': contact,
+      'currentPosition': GeoPoint(currentPosition.latitude, currentPosition.longitude),
+      'selectedAddress': selectedAddress,
+      'landmark': landmark,
+      'startTime': startTime,
+      'date': date,
+    };
+
+    // Update or set user document
+    await userDocRef.set(sessionData, SetOptions(merge: true));
+
+    // Update or set sessions document
+    await sessionsDocRef.add(sessionData);
+  }
   User? getCurrentUser() {
     return _auth.currentUser;
   }

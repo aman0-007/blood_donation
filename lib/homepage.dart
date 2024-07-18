@@ -1,3 +1,4 @@
+import 'package:blood_donor/activesessions.dart';
 import 'package:blood_donor/bloodbanks.dart';
 import 'package:blood_donor/bloodinfo.dart';
 import 'package:blood_donor/checkeligibility.dart';
@@ -246,7 +247,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: (){
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Donorhealthdetails()),
+                          MaterialPageRoute(builder: (context) => Activesessions()),
                         );
                       },
                       child: Padding(
