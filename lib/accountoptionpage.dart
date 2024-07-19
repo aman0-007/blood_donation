@@ -27,7 +27,7 @@ class _AccountOptionPageState extends State<AccountOptionPage> {
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => const MyHomePage(title: "Homepage"),
+                        builder: (_) => const MyHomePage(),
                       ));
                     },
                     child: const Text(

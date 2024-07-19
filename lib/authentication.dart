@@ -1,5 +1,6 @@
 import 'package:blood_donor/accountoptionpage.dart';
 import 'package:blood_donor/bottomnavigationpage.dart';
+import 'package:blood_donor/hospital%20dashboard.dart';
 import 'package:blood_donor/loginscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,10 @@ class Authentication {
         'dob': dob,
         'gender': gender,
         'phone': phone,
+        'userId': userCredential.user?.uid,
       });
+
+      await FirebaseFirestore.instance.collection('donors').doc(userCredential.user?.uid).set({});
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to register')),
@@ -82,11 +86,12 @@ class Authentication {
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
-      await FirebaseFirestore.instance.collection('hospital').doc('bloodbanks').collection('Hospital').doc(userCredential.user?.uid).set({
+      await FirebaseFirestore.instance.collection('hospital')..doc(userCredential.user?.uid).set({
         'email': email,
         'name' : name,
         'currentPosition':GeoPoint(currentPosition.latitude, currentPosition.longitude),
         'full address' : fulladdress,
+        'hosId':userCredential.user?.uid,
       });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -97,18 +102,45 @@ class Authentication {
 
   Future<User?> signInWithEmailAndPassword(BuildContext context, String email, String password) async {
     try {
+      // Attempt to sign in with email and password
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Bottomnavigationpage()),
-      );
+
+      // Check if user is authenticated
+      if (userCredential.user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User sign-in failed')),
+        );
+        return null;
+      }
+
+      final String userId = userCredential.user!.uid;
+
+      // Reference to the document in the 'donors' collection
+      final docRef = FirebaseFirestore.instance.collection('donors').doc(userId);
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists) {
+        // If the document exists, navigate to Bottomnavigationpage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Bottomnavigationpage()),
+        );
+      } else {
+        // If the document does not exist, navigate to Hospitaldashboard
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Hospitaldashboard()), // Replace with your actual page
+        );
+      }
+
       return userCredential.user;
     } catch (e) {
+      // Handle errors and display appropriate messages
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sign-in failed')),
+        SnackBar(content: Text('Sign-in failed: $e')),
       );
       return null;
     }
@@ -181,24 +213,18 @@ class Authentication {
     }
   }
 
-  // Function to save session details in Firestore
   Future<void> saveSessionDetails(User currentUser, String name, String email, String contact, Position currentPosition, String selectedAddress, String? landmark, DateTime startTime, DateTime date,) async {
     // Firestore path
     final firestore = FirebaseFirestore.instance;
-    final userDocRef = firestore
-        .collection('hospital')
-        .doc('bloodbanks')
-        .collection('Hospital')
-        .doc(currentUser.uid)
-        .collection('sessions')
-        .doc('active_sessions');
-    final sessionsDocRef = firestore.collection('sessions').doc(currentUser.uid).collection('active_sessions');
+    final userDocRef = firestore.collection('hospital').doc(currentUser.uid).collection('sessions').doc(name);
 
     // Data to be saved
     Map<String, dynamic> sessionData = {
       'name': name,
       'email': email,
       'contact': contact,
+      'status': 'on',
+      'hosId':currentUser.uid,
       'currentPosition': GeoPoint(currentPosition.latitude, currentPosition.longitude),
       'selectedAddress': selectedAddress,
       'landmark': landmark,
@@ -208,10 +234,8 @@ class Authentication {
 
     // Update or set user document
     await userDocRef.set(sessionData, SetOptions(merge: true));
-
-    // Update or set sessions document
-    await sessionsDocRef.add(sessionData);
   }
+
   User? getCurrentUser() {
     return _auth.currentUser;
   }
@@ -221,7 +245,6 @@ class Authentication {
   }
 
 }
-
 
 class AuthWrapper extends StatelessWidget {
   final Widget home;

@@ -124,7 +124,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           String email = emailController.text;
                           String password = passwordController.text;
                           _authentication.signInWithEmailAndPassword(context, email, password);
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const Bottomnavigationpage()));
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),

@@ -15,6 +15,7 @@ class Activesessions extends StatefulWidget {
 class _ActivesessionsState extends State<Activesessions> {
   late Position _userPosition;
   late Future<List<Map<String, dynamic>>> _sessionsFuture;
+  Set<String> _appliedSessions = Set<String>(); // To track applied sessions
 
   @override
   void initState() {
@@ -39,29 +40,43 @@ class _ActivesessionsState extends State<Activesessions> {
   Future<List<Map<String, dynamic>>> _fetchSessions() async {
     try {
       final firestore = FirebaseFirestore.instance;
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
-        throw Exception('No user logged in');
+
+      // Step 1: Fetch all hospitals
+      final hospitalsSnapshot = await firestore.collection('hospital').get();
+
+      List<Map<String, dynamic>> allSessions = [];
+
+      // Step 2: Fetch sessions from each hospital
+      for (var hospitalDoc in hospitalsSnapshot.docs) {
+        final hospitalId = hospitalDoc.id;
+
+        // Get sessions for this hospital
+        final sessionsSnapshot = await firestore
+            .collection('hospital')
+            .doc(hospitalId)
+            .collection('sessions')
+            .get();
+
+        // Map sessions data
+        final sessions = sessionsSnapshot.docs.map((doc) {
+          final data = doc.data();
+          final geoPoint = data['currentPosition'] as GeoPoint;
+          return {
+            'name': data['name'],
+            'selectedAddress': data['selectedAddress'],
+            'startTime': data['startTime'].toDate(),
+            'date': data['date'].toDate(),
+            'landmark': data['landmark'],
+            'currentPosition': geoPoint,
+            'hosId': data['hosId'], // Ensure this field exists in the document
+          };
+        }).toList();
+
+        // Add to allSessions list
+        allSessions.addAll(sessions);
       }
 
-      final sessionsSnapshot = await firestore
-          .collection('sessions')
-          .doc(currentUser.uid)
-          .collection('active_sessions')
-          .get();
-
-      return sessionsSnapshot.docs.map((doc) {
-        final data = doc.data();
-        final geoPoint = data['currentPosition'] as GeoPoint;
-        return {
-          'name': data['name'],
-          'selectedAddress': data['selectedAddress'],
-          'startTime': data['startTime'].toDate(),
-          'date': data['date'].toDate(),
-          'landmark': data['landmark'],
-          'currentPosition': geoPoint,
-        };
-      }).toList();
+      return allSessions;
     } catch (e) {
       print('Error fetching sessions: $e');
       return [];
@@ -101,20 +116,55 @@ class _ActivesessionsState extends State<Activesessions> {
         throw Exception('No user logged in');
       }
 
-      final donorCollection = firestore.collection('donor');
-      final docRef = donorCollection.doc(); // Create a new document reference
+      // Fetch current user details from the 'users' collection
+      final userDoc = await firestore.collection('users').doc(currentUser.uid).get();
+      final userData = userDoc.data();
+      if (userData == null) {
+        throw Exception('User data not found');
+      }
 
-      await docRef.set({
-        'userId': currentUser.uid,
-        'sessionName': session['name'],
-        'selectedAddress': session['selectedAddress'],
-        'startTime': session['startTime'],
-        'date': session['date'],
-        'landmark': session['landmark'],
-        'currentPosition': GeoPoint(
-          session['currentPosition'].latitude,
-          session['currentPosition'].longitude,
-        ),
+      // Fetch hospital details from the 'hospital' collection
+      final hospitalDoc = await firestore.collection('hospital').doc(session['hosId']).get();
+      final hospitalData = hospitalDoc.data();
+      if (hospitalData == null) {
+        throw Exception('Hospital data not found');
+      }
+
+      // Save donation data in the 'hospital' collection
+      await firestore
+          .collection('hospital')
+          .doc(session['hosId'])
+          .collection('sessions')
+          .doc(session['name'])
+          .update({
+        'donors': {
+          currentUser.uid: {
+            'status': 'pending', // Add donation status
+            'dob': userData['dob'],
+            'email': userData['email'],
+            'gender': userData['gender'],
+            'name': userData['name'],
+            'phone': userData['phone'],
+            'userId': currentUser.uid,
+          },
+        },
+      });
+
+      // Save donation data in the 'users' collection
+      await firestore.collection('users').doc(currentUser.uid).update({
+        'donations': {
+          session['name']: {
+            'hosId': session['hosId'],
+            'name': hospitalData['name'],
+            'email': hospitalData['email'],
+            'donationStatus': 'pending', // Add donation status
+          },
+        },
+      });
+
+      // Add the session to the applied sessions set
+      setState(() {
+        _appliedSessions.add(session['name']);
       });
 
       print('Donation data saved successfully');
@@ -194,15 +244,29 @@ class _ActivesessionsState extends State<Activesessions> {
                   final status = _getSessionStatus(session['startTime']);
 
                   return GestureDetector(
-                    onTap: () => _showDonationDialog(session),
+                    onTap: _appliedSessions.contains(session['name'])
+                        ? null
+                        : () => _showDonationDialog(session),
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: _appliedSessions.contains(session['name'])
+                            ? Colors.grey[300]
+                            : Colors.white,
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(color: Colors.redAccent),
                       ),
-                      child: ListTile(
+                      child: _appliedSessions.contains(session['name'])
+                          ? Center(
+                        child: Text(
+                          'Applied',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      )
+                          : ListTile(
                         contentPadding: EdgeInsets.all(16.0),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

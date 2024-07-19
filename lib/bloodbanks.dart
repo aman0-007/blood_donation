@@ -113,8 +113,6 @@ class _BloodbanksState extends State<Bloodbanks> {
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: FirebaseFirestore.instance
                   .collection('hospital')
-                  .doc('bloodbanks')  // Assuming 'bloodbanks' is a specific document ID
-                  .collection('Hospital')  // Subcollection 'Hospital' under 'bloodbanks'
                   .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -135,7 +133,7 @@ class _BloodbanksState extends State<Bloodbanks> {
 
                     // Accessing fields assuming they are present in your Firestore document
                     var name = bloodbankData['name'] as String? ?? 'Name not available';
-                    var location = bloodbankData['location'] as String? ?? 'Location not available';
+                    var location = bloodbankData['email'] as String? ?? 'Email not available';
                     var geoPoint = bloodbankData['currentPosition'] as GeoPoint?;
                     double hospitalLatitude = geoPoint?.latitude ?? 0.0;
                     double hospitalLongitude = geoPoint?.longitude ?? 0.0;

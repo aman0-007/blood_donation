@@ -1,4 +1,5 @@
 import 'package:blood_donor/startsessionpage.dart';
+import 'package:blood_donor/takeblood.dart';
 import 'package:flutter/material.dart';
 
 class Hospitalcamps extends StatefulWidget {
@@ -47,20 +48,28 @@ class _HospitalcampsState extends State<Hospitalcamps> {
               ),
             ),
             SizedBox(height: 20),
-            Container(
-              width: 200,
-              height: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.redAccent, width: 2),
-                color: Colors.white,
-              ),
-              child: Center(
-                child: Text(
-                  "Live Session",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+            GestureDetector(
+              onTap: (){
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Takeblood()),
+                );
+              },
+              child: Container(
+                width: 200,
+                height: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.redAccent, width: 2),
+                  color: Colors.white,
+                ),
+                child: Center(
+                  child: Text(
+                    "Live Session",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
               ),

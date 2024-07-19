@@ -1,23 +1,21 @@
-import 'dart:async';
+import 'package:blood_donor/hospital%20dashboard.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:blood_donor/accountoptionpage.dart';
 import 'package:blood_donor/bottomnavigationpage.dart';
-import 'package:blood_donor/googlemap/getlocation.dart';
-import 'package:blood_donor/hospital%20dashboard.dart';
-import 'package:blood_donor/hospitallogin.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:blood_donor/authentication.dart';
 
-
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); // Initialize Firebase
   runApp(const MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,29 +25,60 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: AccountOptionPage(),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => AuthWrapper(
-        home: Bottomnavigationpage(), // Replace with your home page
-        login: AccountOptionPage(), // Replace with your login page
-      ),));
+    checkUserLoginStatus();
+  }
+
+  Future<void> checkUserLoginStatus() async {
+    await Future.delayed(const Duration(seconds: 2)); // Simulating a delay
+    final Authentication _auth = Authentication();
+
+    // Check Firebase authentication state
+    User? user = _auth.getCurrentUser();
+    if (user != null) {
+      // User is authenticated, check Firestore for donor status
+
+      final docRef = FirebaseFirestore.instance.collection('donors').doc(user.uid);
+      final docSnapshot = await docRef.get();
+
+      // Navigate based on donor status
+      if (docSnapshot.exists) {
+        // If the document exists, navigate to Bottomnavigationpage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Bottomnavigationpage()),
+        );
+      } else {
+        // If the document does not exist, navigate to Hospitaldashboard
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Hospitaldashboard()), // Replace with your actual page
+        );
+      }
+    } else {
+      // User not authenticated, navigate to login page
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => AccountOptionPage()));
+    }
+
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -58,7 +87,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Column(
+        child: isLoading
+            ? CircularProgressIndicator() // Show loading indicator while checking user state
+            : Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Center(child: Image.asset('assets/blood_drop.png')),
