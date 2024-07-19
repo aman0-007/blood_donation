@@ -29,21 +29,6 @@ class _HospitaldashboardState extends State<Hospitaldashboard> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => NotificationPage()));
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Image.asset(
-                "assets/nonotification.png",
-                width: 24,
-                height: 24,
-              ),
-            ),
-          ),
-        ],
       ),
       body: Center(
         child: Column(

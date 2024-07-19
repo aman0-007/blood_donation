@@ -15,32 +15,46 @@ class _bloodInfoState extends State<bloodInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.redAccent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          'Blood Groups Info.',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 40.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Increased border radius for a smoother look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color with less opacity
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Lighter border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Subtle shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 10,
+                      offset: Offset(0, 4), // Adjusted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.redAccent, // Red background for CircleAvatar
                     child: ClipOval(
                       child: Image.asset(
-                        'assets/ap.png',
-                        width: 50, // Adjust width and height for better fitting
+                        'assets/am.png',
+                        width: 50,
                         height: 50,
                         fit: BoxFit.cover,
                       ),
@@ -51,14 +65,17 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Slightly larger font size
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
@@ -133,33 +150,30 @@ class _bloodInfoState extends State<bloodInfo> {
             SizedBox(height:7),
 
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Increased border radius for a smoother look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color with less opacity
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Lighter border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Subtle shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 10,
+                      offset: Offset(0, 4), // Adjusted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white, // Set background color to white
+                    backgroundColor: Colors.redAccent, // Red background for CircleAvatar
                     child: ClipOval(
-                      child: Container(
-                        color: Colors.white, // Ensure the image container has a white background
-                        child: Image.asset(
-                          'assets/am.png',
-                          width: 50, // Adjust width and height for better fitting
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image.asset(
+                        'assets/am.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -168,14 +182,17 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Slightly larger font size
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
@@ -250,33 +267,30 @@ class _bloodInfoState extends State<bloodInfo> {
             SizedBox(height:7),
 
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Slightly increased border radius for a smoother look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color with less opacity
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Lighter border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Subtle shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 8, // Softer blur
+                      offset: Offset(0, 4), // Adjusted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white, // Set background color to white
+                    backgroundColor: Colors.redAccent, // Red background for CircleAvatar
                     child: ClipOval(
-                      child: Container(
-                        color: Colors.white, // Ensure the image container has a white background
-                        child: Image.asset(
-                          'assets/am.png',
-                          width: 50, // Adjust width and height for better fitting
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image.asset(
+                        'assets/am.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -285,14 +299,17 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Slightly larger font size for title
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
@@ -367,33 +384,30 @@ class _bloodInfoState extends State<bloodInfo> {
             SizedBox(height:7),
 
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Slightly increased border radius for a smoother look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color with less opacity
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Lighter border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Subtle shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 8, // Softer blur
+                      offset: Offset(0, 4), // Adjusted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white, // Set background color to white
+                    backgroundColor: Colors.redAccent, // Red background for CircleAvatar
                     child: ClipOval(
-                      child: Container(
-                        color: Colors.white, // Ensure the image container has a white background
-                        child: Image.asset(
-                          'assets/am.png',
-                          width: 50, // Adjust width and height for better fitting
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image.asset(
+                        'assets/am.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -402,59 +416,62 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Slightly larger font size for title
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Colors.white, // Set background color of the AlertDialog
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.redAccent, width: 1), // Set border color and width
+                          borderRadius: BorderRadius.circular(15), // Matching border radius
+                          side: BorderSide(color: Colors.redAccent, width: 1),
                         ),
                         title: Column(
                           children: [
-                            Text(' Negative (B-)', style: TextStyle(color: Colors.redAccent)), // Title with red accent color
+                            Text('B Negative (B-)', style: TextStyle(color: Colors.redAccent, fontSize: 20, fontWeight: FontWeight.bold)),
                             Divider(
-                              color: Colors.redAccent, // Divider color
-                              thickness: 2, // Divider thickness
+                              color: Colors.redAccent,
+                              thickness: 2,
                             ),
                           ],
                         ),
                         content: Container(
-                          width: double.maxFinite, // Make the container fill the AlertDialog
+                          width: double.maxFinite,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 'Antigens:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('B antigens on red blood cells.'),
                               SizedBox(height: 8),
                               Text(
                                 'Antibodies:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Anti-A antibodies in plasma.'),
                               SizedBox(height: 8),
                               Text(
                                 'Compatibility:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can donate to B+/-, AB+/- recipients.'),
                               SizedBox(height: 8),
                               Text(
                                 'Receiving:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can receive from B-, O- donors.'),
                               SizedBox(height: 8),
@@ -484,33 +501,30 @@ class _bloodInfoState extends State<bloodInfo> {
             SizedBox(height:7),
 
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Increased border radius for a smoother look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color with less opacity
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Lighter border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Subtle shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 8, // Slightly softer blur
+                      offset: Offset(0, 4), // Adjusted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white, // Set background color to white
+                    backgroundColor: Colors.redAccent, // Red background for CircleAvatar
                     child: ClipOval(
-                      child: Container(
-                        color: Colors.white, // Ensure the image container has a white background
-                        child: Image.asset(
-                          'assets/am.png',
-                          width: 50, // Adjust width and height for better fitting
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image.asset(
+                        'assets/am.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -519,65 +533,68 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Slightly larger font size for title
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Colors.white, // Set background color of the AlertDialog
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.redAccent, width: 1), // Set border color and width
+                          borderRadius: BorderRadius.circular(15), // Matching border radius
+                          side: BorderSide(color: Colors.redAccent, width: 1),
                         ),
                         title: Column(
                           children: [
-                            Text('AB Positive (AB+)', style: TextStyle(color: Colors.redAccent)), // Title with red accent color
+                            Text('AB Positive (AB+)', style: TextStyle(color: Colors.redAccent, fontSize: 20, fontWeight: FontWeight.bold)),
                             Divider(
-                              color: Colors.redAccent, // Divider color
-                              thickness: 2, // Divider thickness
+                              color: Colors.redAccent,
+                              thickness: 2,
                             ),
                           ],
                         ),
                         content: Container(
-                          width: double.maxFinite, // Make the container fill the AlertDialog
+                          width: double.maxFinite,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 'Antigens:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('A and B antigens on red blood cells.'),
                               SizedBox(height: 8),
                               Text(
                                 'Antibodies:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('No anti-A or anti-B antibodies in plasma (universal recipient).'),
                               SizedBox(height: 8),
                               Text(
                                 'Compatibility:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can donate to AB+ recipients only.'),
                               SizedBox(height: 8),
                               Text(
                                 'Receiving:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can receive from A+, A-, B+, B-, AB+, AB-, O+, O- donors.'),
                               SizedBox(height: 8),
                               Text(
                                 'Population Distribution:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Relatively rare compared to A and B groups.'),
                             ],
@@ -588,7 +605,7 @@ class _bloodInfoState extends State<bloodInfo> {
                             onPressed: () {
                               Navigator.pop(context); // Close the dialog
                             },
-                            child: Text('Close'),
+                            child: Text('Close', style: TextStyle(color: Colors.redAccent)),
                           ),
                         ],
                       ),
@@ -601,33 +618,30 @@ class _bloodInfoState extends State<bloodInfo> {
             SizedBox(height:7),
 
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Increased border radius for a smoother look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color with less opacity
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Lighter border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Subtle shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 10,
+                      offset: Offset(0, 4), // Adjusted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white, // Set background color to white
+                    backgroundColor: Colors.redAccent, // Red background for CircleAvatar
                     child: ClipOval(
-                      child: Container(
-                        color: Colors.white, // Ensure the image container has a white background
-                        child: Image.asset(
-                          'assets/am.png',
-                          width: 50, // Adjust width and height for better fitting
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image.asset(
+                        'assets/am.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -636,65 +650,68 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Slightly larger font size for the title
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Colors.white, // Set background color of the AlertDialog
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.redAccent, width: 1), // Set border color and width
+                          borderRadius: BorderRadius.circular(15), // Matching border radius
+                          side: BorderSide(color: Colors.redAccent, width: 1),
                         ),
                         title: Column(
                           children: [
-                            Text('AB Negative (AB-)', style: TextStyle(color: Colors.redAccent)), // Title with red accent color
+                            Text('AB Negative (AB-)', style: TextStyle(color: Colors.redAccent, fontSize: 20, fontWeight: FontWeight.bold)),
                             Divider(
-                              color: Colors.redAccent, // Divider color
-                              thickness: 2, // Divider thickness
+                              color: Colors.redAccent,
+                              thickness: 2,
                             ),
                           ],
                         ),
                         content: Container(
-                          width: double.maxFinite, // Make the container fill the AlertDialog
+                          width: double.maxFinite,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 'Antigens:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('A and B antigens on red blood cells.'),
                               SizedBox(height: 8),
                               Text(
                                 'Antibodies:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('No anti-A or anti-B antibodies in plasma (universal recipient).'),
                               SizedBox(height: 8),
                               Text(
                                 'Compatibility:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can donate to AB+/- recipients only.'),
                               SizedBox(height: 8),
                               Text(
                                 'Receiving:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can receive from AB-, A-, B-, O- donors.'),
                               SizedBox(height: 8),
                               Text(
                                 'Population Distribution:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Very rare.'),
                             ],
@@ -705,7 +722,7 @@ class _bloodInfoState extends State<bloodInfo> {
                             onPressed: () {
                               Navigator.pop(context); // Close the dialog
                             },
-                            child: Text('Close'),
+                            child: Text('Close', style: TextStyle(color: Colors.redAccent)),
                           ),
                         ],
                       ),
@@ -718,33 +735,30 @@ class _bloodInfoState extends State<bloodInfo> {
             SizedBox(height:7),
 
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Increased border radius for a smoother look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color with less opacity
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Lighter border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Subtle shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 10,
+                      offset: Offset(0, 4), // Adjusted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white, // Set background color to white
+                    backgroundColor: Colors.redAccent, // Red background for CircleAvatar
                     child: ClipOval(
-                      child: Container(
-                        color: Colors.white, // Ensure the image container has a white background
-                        child: Image.asset(
-                          'assets/am.png',
-                          width: 50, // Adjust width and height for better fitting
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image.asset(
+                        'assets/am.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -753,65 +767,68 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Slightly larger font size
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Colors.white, // Set background color of the AlertDialog
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.redAccent, width: 1), // Set border color and width
+                          borderRadius: BorderRadius.circular(15), // Matching border radius
+                          side: BorderSide(color: Colors.redAccent, width: 1),
                         ),
                         title: Column(
                           children: [
-                            Text('O Positive (O+)', style: TextStyle(color: Colors.redAccent)), // Title with red accent color
+                            Text('O Positive (O+)', style: TextStyle(color: Colors.redAccent, fontSize: 20, fontWeight: FontWeight.bold)),
                             Divider(
-                              color: Colors.redAccent, // Divider color
-                              thickness: 2, // Divider thickness
+                              color: Colors.redAccent,
+                              thickness: 2,
                             ),
                           ],
                         ),
                         content: Container(
-                          width: double.maxFinite, // Make the container fill the AlertDialog
+                          width: double.maxFinite,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 'Antigens:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('No A and B antigens on red blood cells.'),
                               SizedBox(height: 8),
                               Text(
                                 'Antibodies:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Anti-A or anti-B antibodies in plasma.'),
                               SizedBox(height: 8),
                               Text(
                                 'Compatibility:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can donate to A+, B+, AB+, O+ recipients.'),
                               SizedBox(height: 8),
                               Text(
                                 'Receiving:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can receive from O+, O- donors.'),
                               SizedBox(height: 8),
                               Text(
                                 'Population Distribution:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Most common blood group worldwide.'),
                             ],
@@ -822,7 +839,7 @@ class _bloodInfoState extends State<bloodInfo> {
                             onPressed: () {
                               Navigator.pop(context); // Close the dialog
                             },
-                            child: Text('Close'),
+                            child: Text('Close', style: TextStyle(color: Colors.redAccent)),
                           ),
                         ],
                       ),
@@ -835,33 +852,30 @@ class _bloodInfoState extends State<bloodInfo> {
             SizedBox(height:7),
 
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Increased border radius for a more rounded look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color with less opacity
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Subtle border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Softer shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 10,
+                      offset: Offset(0, 5), // Slightly shifted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white, // Set background color to white
+                    backgroundColor: Colors.redAccent, // Background color for the CircleAvatar
                     child: ClipOval(
-                      child: Container(
-                        color: Colors.white, // Ensure the image container has a white background
-                        child: Image.asset(
-                          'assets/am.png',
-                          width: 50, // Adjust width and height for better fitting
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image.asset(
+                        'assets/am.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -870,65 +884,68 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Increased font size for the title
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Added padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Colors.white, // Set background color of the AlertDialog
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.redAccent, width: 1), // Set border color and width
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(color: Colors.redAccent, width: 1),
                         ),
                         title: Column(
                           children: [
-                            Text('O Negative (O+)', style: TextStyle(color: Colors.redAccent)), // Title with red accent color
+                            Text('O Negative (O-)', style: TextStyle(color: Colors.redAccent, fontSize: 20, fontWeight: FontWeight.bold)),
                             Divider(
-                              color: Colors.redAccent, // Divider color
-                              thickness: 2, // Divider thickness
+                              color: Colors.redAccent,
+                              thickness: 2,
                             ),
                           ],
                         ),
                         content: Container(
-                          width: double.maxFinite, // Make the container fill the AlertDialog
+                          width: double.maxFinite,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 'Antigens:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('No A and B antigens on red blood cells.'),
                               SizedBox(height: 8),
                               Text(
                                 'Antibodies:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Anti-A or anti-B antibodies in plasma.'),
                               SizedBox(height: 8),
                               Text(
                                 'Compatibility:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can donate to A+, A-, B+, B-, AB+, AB-, O+, O- recipients.'),
                               SizedBox(height: 8),
                               Text(
                                 'Receiving:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can receive from O- donors.'),
                               SizedBox(height: 8),
                               Text(
                                 'Population Distribution:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Less common compared to O+.'),
                             ],
@@ -939,7 +956,7 @@ class _bloodInfoState extends State<bloodInfo> {
                             onPressed: () {
                               Navigator.pop(context); // Close the dialog
                             },
-                            child: Text('Close'),
+                            child: Text('Close', style: TextStyle(color: Colors.redAccent)),
                           ),
                         ],
                       ),
@@ -952,33 +969,30 @@ class _bloodInfoState extends State<bloodInfo> {
             SizedBox(height:7),
 
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Increased border radius for a more rounded look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Subtle border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Softer shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 10,
+                      offset: Offset(0, 5), // Slightly shifted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white, // Set background color to white
+                    backgroundColor: Colors.redAccent, // Changed background color to match theme
                     child: ClipOval(
-                      child: Container(
-                        color: Colors.white, // Ensure the image container has a white background
-                        child: Image.asset(
-                          'assets/am.png',
-                          width: 50, // Adjust width and height for better fitting
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image.asset(
+                        'assets/am.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -987,59 +1001,62 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Increased font size for title
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Added padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Colors.white, // Set background color of the AlertDialog
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.redAccent, width: 1), // Set border color and width
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(color: Colors.redAccent, width: 1),
                         ),
                         title: Column(
                           children: [
-                            Text('Rh Positive (Rh+)', style: TextStyle(color: Colors.redAccent)), // Title with red accent color
+                            Text('Rh Positive (Rh+)', style: TextStyle(color: Colors.redAccent, fontSize: 20, fontWeight: FontWeight.bold)),
                             Divider(
-                              color: Colors.redAccent, // Divider color
-                              thickness: 2, // Divider thickness
+                              color: Colors.redAccent,
+                              thickness: 2,
                             ),
                           ],
                         ),
                         content: Container(
-                          width: double.maxFinite, // Make the container fill the AlertDialog
+                          width: double.maxFinite,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 'Antigens:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Rh antigen present on red blood cells.'),
                               SizedBox(height: 8),
                               Text(
                                 'Compatibility:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can donate to Rh+ recipients.'),
                               SizedBox(height: 8),
                               Text(
                                 'Receiving:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can receive Rh+ or Rh- blood.'),
                               SizedBox(height: 8),
                               Text(
                                 'Population Distribution:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('About 85% of the population is Rh+.'),
                             ],
@@ -1048,9 +1065,9 @@ class _bloodInfoState extends State<bloodInfo> {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              Navigator.pop(context); // Close the dialog
+                              Navigator.pop(context);
                             },
-                            child: Text('Close'),
+                            child: Text('Close', style: TextStyle(color: Colors.redAccent)),
                           ),
                         ],
                       ),
@@ -1063,33 +1080,30 @@ class _bloodInfoState extends State<bloodInfo> {
             SizedBox(height:7),
 
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), // Circular shape with radius 10
+                  borderRadius: BorderRadius.circular(15), // Increased border radius for a more rounded look
                   color: Colors.white, // Background color
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)), // Border color
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)), // Subtle border color
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
+                      color: Colors.black.withOpacity(0.1), // Softer shadow color
                       spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // Shadow position
+                      blurRadius: 10,
+                      offset: Offset(0, 5), // Slightly shifted shadow position
                     ),
                   ],
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white, // Set background color to white
+                    backgroundColor: Colors.redAccent, // Changed background color to match theme
                     child: ClipOval(
-                      child: Container(
-                        color: Colors.white, // Ensure the image container has a white background
-                        child: Image.asset(
-                          'assets/am.png',
-                          width: 50, // Adjust width and height for better fitting
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image.asset(
+                        'assets/am.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -1098,59 +1112,62 @@ class _bloodInfoState extends State<bloodInfo> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                      fontSize: 18, // Increased font size for title
                     ),
                   ),
                   subtitle: Text(
                     'Subtitle',
                     style: TextStyle(
                       color: Colors.black54,
+                      fontSize: 14, // Adjusted font size for subtitle
                     ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Added padding inside ListTile
                   onTap: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Colors.white, // Set background color of the AlertDialog
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.redAccent, width: 1), // Set border color and width
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(color: Colors.redAccent, width: 1),
                         ),
                         title: Column(
                           children: [
-                            Text('Rh Negative (Rh-)', style: TextStyle(color: Colors.redAccent)), // Title with red accent color
+                            Text('Rh Negative (Rh-)', style: TextStyle(color: Colors.redAccent, fontSize: 20, fontWeight: FontWeight.bold)),
                             Divider(
-                              color: Colors.redAccent, // Divider color
-                              thickness: 2, // Divider thickness
+                              color: Colors.redAccent,
+                              thickness: 2,
                             ),
                           ],
                         ),
                         content: Container(
-                          width: double.maxFinite, // Make the container fill the AlertDialog
+                          width: double.maxFinite,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 'Antigens:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('No Rh antigen present on red blood cells.'),
                               SizedBox(height: 8),
                               Text(
                                 'Compatibility:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can donate to Rh+ or Rh- recipients.'),
                               SizedBox(height: 8),
                               Text(
                                 'Receiving:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('Can receive Rh- blood only.'),
                               SizedBox(height: 8),
                               Text(
                                 'Population Distribution:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text('About 15% of the population is Rh-.'),
                             ],
@@ -1159,9 +1176,9 @@ class _bloodInfoState extends State<bloodInfo> {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              Navigator.pop(context); // Close the dialog
+                              Navigator.pop(context);
                             },
-                            child: Text('Close'),
+                            child: Text('Close', style: TextStyle(color: Colors.redAccent)),
                           ),
                         ],
                       ),

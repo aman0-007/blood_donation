@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:blood_donor/blinkingdot.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -40,6 +41,10 @@ class _ActivesessionsState extends State<Activesessions> {
   Future<List<Map<String, dynamic>>> _fetchSessions() async {
     try {
       final firestore = FirebaseFirestore.instance;
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        throw Exception('No user logged in');
+      }
 
       // Step 1: Fetch all hospitals
       final hospitalsSnapshot = await firestore.collection('hospital').get();
@@ -58,19 +63,41 @@ class _ActivesessionsState extends State<Activesessions> {
             .get();
 
         // Map sessions data
-        final sessions = sessionsSnapshot.docs.map((doc) {
+        final List<Future<Map<String, dynamic>>> sessionFutures = sessionsSnapshot.docs.map((doc) async {
           final data = doc.data();
           final geoPoint = data['currentPosition'] as GeoPoint;
+          final sessionName = data['name'];
+          bool isApplied = _appliedSessions.contains(sessionName);
+          String operation = 'apply'; // Default to apply
+
+          // Check if session is applied
+          final userDoc = firestore.collection('users').doc(currentUser.uid);
+          final userSnap = await userDoc.get();
+          final userData = userSnap.data();
+          if (userData != null && userData.containsKey('donations')) {
+            Map<String, dynamic> donations = userData['donations'];
+            if (donations.containsKey(sessionName) &&
+                donations[sessionName]['donationStatus'] == 'pending') {
+              isApplied = true;
+              operation = 'applied';
+            }
+          }
+
           return {
-            'name': data['name'],
+            'name': sessionName,
             'selectedAddress': data['selectedAddress'],
             'startTime': data['startTime'].toDate(),
             'date': data['date'].toDate(),
             'landmark': data['landmark'],
             'currentPosition': geoPoint,
-            'hosId': data['hosId'], // Ensure this field exists in the document
+            'hosId': hospitalId, // Ensure this field exists in the document
+            'isApplied': isApplied,
+            'operation': operation,
           };
         }).toList();
+
+        // Wait for all session futures to complete
+        final sessions = await Future.wait(sessionFutures);
 
         // Add to allSessions list
         allSessions.addAll(sessions);
@@ -82,6 +109,7 @@ class _ActivesessionsState extends State<Activesessions> {
       return [];
     }
   }
+
 
   double _calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
     const int earthRadius = 6371; // Radius of the earth in km
@@ -136,7 +164,7 @@ class _ActivesessionsState extends State<Activesessions> {
           .doc(session['hosId'])
           .collection('sessions')
           .doc(session['name'])
-          .update({
+          .set({
         'donors': {
           currentUser.uid: {
             'status': 'pending', // Add donation status
@@ -148,7 +176,8 @@ class _ActivesessionsState extends State<Activesessions> {
             'userId': currentUser.uid,
           },
         },
-      });
+      }, SetOptions(merge: true));
+
 
       // Save donation data in the 'users' collection
       await firestore.collection('users').doc(currentUser.uid).update({
@@ -157,7 +186,8 @@ class _ActivesessionsState extends State<Activesessions> {
             'hosId': session['hosId'],
             'name': hospitalData['name'],
             'email': hospitalData['email'],
-            'donationStatus': 'pending', // Add donation status
+            'donationStatus': 'pending',
+            'operation': 'applied'
           },
         },
       });
@@ -201,6 +231,17 @@ class _ActivesessionsState extends State<Activesessions> {
 
   @override
   Widget build(BuildContext context) {
+    if (_userPosition == null) {
+      // If _userPosition is null, display a loading indicator or handle the absence of position data
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Loading...'),
+        ),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.redAccent,
@@ -232,99 +273,234 @@ class _ActivesessionsState extends State<Activesessions> {
                 itemCount: sessions.length,
                 itemBuilder: (context, index) {
                   final session = sessions[index];
-                  final sessionPosition = session['currentPosition'] as GeoPoint;
-                  final distance = _userPosition != null
-                      ? _calculateDistance(
-                    _userPosition.latitude,
-                    _userPosition.longitude,
-                    sessionPosition.latitude,
-                    sessionPosition.longitude,
-                  )
-                      : 0;
-                  final status = _getSessionStatus(session['startTime']);
-
-                  return GestureDetector(
-                    onTap: _appliedSessions.contains(session['name'])
-                        ? null
-                        : () => _showDonationDialog(session),
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 8.0),
-                      decoration: BoxDecoration(
-                        color: _appliedSessions.contains(session['name'])
-                            ? Colors.grey[300]
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(color: Colors.redAccent),
-                      ),
-                      child: _appliedSessions.contains(session['name'])
-                          ? Center(
-                        child: Text(
-                          'Applied',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.redAccent,
-                          ),
-                        ),
-                      )
-                          : ListTile(
-                        contentPadding: EdgeInsets.all(16.0),
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              session['name'],
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                              decoration: BoxDecoration(
-                                color: status == 'Live' ? Colors.red : Colors.grey[300],
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              child: Text(
-                                status,
-                                style: TextStyle(
-                                  color: status == 'Live' ? Colors.white : Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Address: ${session['selectedAddress']}',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            Text(
-                              'Date: ${DateFormat('dd-MM-yyyy').format(session['date'])}',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            Text(
-                              'Start Time: ${DateFormat('HH:mm').format(session['startTime'])}',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            Text(
-                              'Landmark: ${session['landmark']}',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            Text(
-                              'Distance: ${distance.toStringAsFixed(2)} km',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                  return _buildSessionCard(session);
                 },
               );
+
             }
           },
         ),
       ),
     );
   }
+
+
+  Widget _buildSessionCard(Map<String, dynamic> session) {
+    final sessionPosition = session['currentPosition'] as GeoPoint;
+    final distance = _userPosition != null
+        ? _calculateDistance(
+      _userPosition.latitude,
+      _userPosition.longitude,
+      sessionPosition.latitude,
+      sessionPosition.longitude,
+    )
+        : 0;
+    final status = _getSessionStatus(session['startTime']);
+    final isApplied = session['isApplied'];
+    final operation = session['operation'];
+
+    return GestureDetector(
+      onTap: isApplied
+          ? null // Do nothing if already applied
+          : () => _showDonationDialog(session),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(12.0),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 6,
+              offset: Offset(0, 4), // Change shadow position for better effect
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(16.0),
+        margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    session['name'] ?? '',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    if (status == 'Live')
+                      BlinkingDot(size: 10.0)
+                    else
+                      Container(
+                        width: 10.0,
+                        height: 10.0,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    SizedBox(width: 6.0),
+                    if (status == 'Live')
+                      BlinkingText(
+                        text: status,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.red,
+                        ),
+                      )
+                    else
+                      Text(
+                        status,
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 12.0),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Address: ',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: session['selectedAddress'] ?? '',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 8.0),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Landmark: ',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: session['landmark'] ?? '',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 8.0),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Date: ',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: DateFormat.yMMMd().format(session['date']),
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 8.0),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Start Time: ',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: DateFormat.jm().format(session['startTime']),
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 8.0),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Distance: ',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: '${distance.toStringAsFixed(2)} km',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 12.0),
+            ElevatedButton(
+              onPressed: operation == 'applied'
+                  ? null // Applied, so no onPressed function
+                  : () => _showDonationDialog(session),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: operation == 'applied'
+                    ? Colors.grey
+                    : Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: Text(
+                operation == 'applied' ? 'Applied' : 'Apply',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 }
+
+

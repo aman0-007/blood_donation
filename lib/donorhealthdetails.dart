@@ -1,8 +1,11 @@
 import 'package:blood_donor/bottomnavigationpage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Donorhealthdetails extends StatefulWidget {
-  const Donorhealthdetails({Key? key}) : super(key: key);
+  final String userId;
+  const Donorhealthdetails({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<Donorhealthdetails> createState() => _DonorhealthdetailsState();
@@ -428,10 +431,20 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                           ),
                         ),
                         onPressed: _isVerificationComplete()
-                            ? () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => const Bottomnavigationpage()), // Make sure BottomNavigationPage is defined
-                          );
+                            ? () async {
+
+                          var currentUser = FirebaseAuth.instance.currentUser;
+                          await FirebaseFirestore.instance
+                              .collection('hospital')
+                              .doc(currentUser?.uid) // Using the hospital ID passed to this widget
+                              .collection('sessions')
+                              .doc() // Using the session name passed to this widget
+                              .update({
+                            'donors.${widget.userId}.status': 'done', // Update only the status
+                          });
+
+
+                          Navigator.of(context).pop();
                         }
                             : null,
                         child: Text(

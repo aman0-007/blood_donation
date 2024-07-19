@@ -16,6 +16,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
+  final TextEditingController lifeSavedController = TextEditingController();
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
           emailController.text = userData['email'];
           phoneController.text = userData['phone'];
           dobController.text = userData['dob'];
+          lifeSavedController.text = userData['lifeSaved'];
         });
       }
     }
@@ -79,8 +81,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: MediaQuery.of(context).size.height * 0.07,
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          "3",
+                        Text(
+                          lifeSavedController.text,
                           style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
                         ),
                         const Text(

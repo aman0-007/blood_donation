@@ -14,7 +14,8 @@ class Bloodbanks extends StatefulWidget {
 
 class _BloodbanksState extends State<Bloodbanks> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
-  late Position _userPosition;
+  Position? _userPosition; // Initialize as nullable
+  String searchQuery = '';
 
   @override
   void initState() {
@@ -87,26 +88,23 @@ class _BloodbanksState extends State<Bloodbanks> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.search, color: Colors.grey.withOpacity(0.7)),
-                        hintText: 'Search',
-                        hintStyle: TextStyle(color: Colors.grey.withOpacity(0.7)),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 12.0),
-                      ),
-                    ),
-                  ),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value.toLowerCase();
+                });
+              },
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                hintText: 'Search blood banks...',
+                hintStyle: TextStyle(color: Colors.grey[600]),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none,
                 ),
-              ],
+                fillColor: Colors.grey[200],
+                filled: true,
+              ),
             ),
           ),
           Expanded(
@@ -122,8 +120,11 @@ class _BloodbanksState extends State<Bloodbanks> {
                   return Center(child: Text('No blood banks found.'));
                 }
 
-                // Access all documents in the subcollection
-                var bloodbanks = snapshot.data!.docs;
+                // Filter blood banks based on search query
+                var bloodbanks = snapshot.data!.docs.where((doc) {
+                  var name = (doc.data()['name'] as String).toLowerCase();
+                  return name.contains(searchQuery);
+                }).toList();
 
                 // Construct UI to display blood banks
                 return ListView.builder(
@@ -139,17 +140,23 @@ class _BloodbanksState extends State<Bloodbanks> {
                     double hospitalLongitude = geoPoint?.longitude ?? 0.0;
 
                     // Calculate distance between user and hospital
-                    double distance = _calculateDistance(_userPosition.latitude, _userPosition.longitude, hospitalLatitude, hospitalLongitude);
+                    double distance = _calculateDistance(
+                        _userPosition!.latitude,
+                        _userPosition!.longitude,
+                        hospitalLatitude,
+                        hospitalLongitude
+                    );
 
                     // Display blood bank details in ListTile with distance
-                    return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[250],
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(color: Colors.redAccent),
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: ListTile(
+                        contentPadding: EdgeInsets.all(16.0),
+                        tileColor: Colors.white, // Set ListTile background color to white
                         leading: CircleAvatar(
                           backgroundColor: Colors.redAccent,
                           child: Icon(Icons.local_hospital, color: Colors.white),
@@ -159,18 +166,21 @@ class _BloodbanksState extends State<Bloodbanks> {
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
                           ),
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            SizedBox(height: 4.0),
                             Text(
                               location,
-                              style: TextStyle(color: Colors.grey[700]),
+                              style: TextStyle(color: Colors.grey[600], fontSize: 14.0),
                             ),
+                            SizedBox(height: 4.0),
                             Text(
-                              'Distance: ${distance.toStringAsFixed(2)} km', // Display distance here
-                              style: TextStyle(color: Colors.grey[700]),
+                              'Distance: ${distance.toStringAsFixed(2)} km',
+                              style: TextStyle(color: Colors.grey[500], fontSize: 14.0),
                             ),
                           ],
                         ),

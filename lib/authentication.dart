@@ -63,6 +63,7 @@ class Authentication {
         'gender': gender,
         'phone': phone,
         'userId': userCredential.user?.uid,
+        'lifeSaved': 0,
       });
 
       await FirebaseFirestore.instance.collection('donors').doc(userCredential.user?.uid).set({});

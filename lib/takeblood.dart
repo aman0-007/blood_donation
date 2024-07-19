@@ -1,3 +1,4 @@
+import 'package:blood_donor/donorhealthdetails.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -33,7 +34,12 @@ class _TakebloodState extends State<Takeblood> {
       if (donors != null) {
         // Iterate over each donor subdocument
         donors.forEach((donorId, donorData) {
-          donorDetails.add(donorData as Map<String, dynamic>);
+          if (donorData['status'] == 'pending') {
+            donorDetails.add({
+              'id': donorId, // Store the donor ID for navigation
+              ...donorData as Map<String, dynamic>
+            });
+          }
         });
       }
     }
@@ -65,7 +71,8 @@ class _TakebloodState extends State<Takeblood> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
+      body: Container(
+        color: Colors.white, // Set background color to white
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -114,20 +121,44 @@ class _TakebloodState extends State<Takeblood> {
                       String name = donorDetails[index]['name'] ?? 'No Name';
                       String dob = donorDetails[index]['dob'] ?? 'No DOB';
                       String eligibility = _calculateEligibility(dob);
+                      String userId = donorDetails[index]['userId'];
+                      String status = donorDetails[index]['status']; // Get the user ID
 
-                      return ListTile(
-                        title: Text(name),
-                        subtitle: Text('DOB: $dob\nEligibility: $eligibility'),
-                      );
+                      if (status=="pending"){
+                        return Card( // Use Card to make ListTile more attractive
+                          margin: EdgeInsets.symmetric(vertical: 8.0),
+                          elevation: 4,
+                          child: ListTile(
+                            title: Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Text('DOB: $dob\nEligibility: $eligibility'),
+                            onTap: () {
+                              // Navigate to DonorHealthDetails page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Donorhealthdetails(userId : userId),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }
                     },
                   );
                 },
               ),
             ),
-
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Add your onPressed code here
+        },
+        backgroundColor: Colors.redAccent,
+        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 }
+
