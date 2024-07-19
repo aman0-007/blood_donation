@@ -15,26 +15,30 @@ class _TakebloodState extends State<Takeblood> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<List<Map<String, dynamic>>> _fetchDonorDetails() async {
-    User? currentUser = _auth.currentUser; // Replace with actual current user ID
+    User? currentUser = _auth.currentUser; // Ensure you have the current user
     List<Map<String, dynamic>> donorDetails = [];
 
     // Fetch sessions under the current user's hospital collection
     var sessions = await _firestore
         .collection('hospital')
-        .doc(currentUser?.uid)
-        .collection('session')
+        .doc(currentUser?.uid) // Using the current user's ID
+        .collection('sessions') // Sessions collection
         .get();
 
     for (var session in sessions.docs) {
-      // Fetch donors under each session
-      var donors = await session.reference.collection('donors').get();
-      for (var donor in donors.docs) {
-        donorDetails.add(donor.data());
+      // Access the donors map within each session document
+      var sessionData = session.data();
+      var donors = sessionData['donors'] as Map<String, dynamic>?;
+
+      if (donors != null) {
+        // Iterate over each donor subdocument
+        donors.forEach((donorId, donorData) {
+          donorDetails.add(donorData as Map<String, dynamic>);
+        });
       }
     }
     return donorDetails;
   }
-
 
   String _calculateEligibility(String dob) {
     DateTime birthDate = DateFormat('dd/MM/yyyy').parse(dob);
