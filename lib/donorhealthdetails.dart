@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 
 class Donorhealthdetails extends StatefulWidget {
   final String userId;
-  const Donorhealthdetails({Key? key, required this.userId}) : super(key: key);
+  final String sessionName;
+  const Donorhealthdetails({Key? key, required this.userId, required this.sessionName}) : super(key: key);
 
   @override
   State<Donorhealthdetails> createState() => _DonorhealthdetailsState();
@@ -20,6 +21,15 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
   bool? _hadVaccination;
   bool _isVerified = false;
 
+  bool _areAllQuestionsAnswered() {
+    return _hasDiabetes != null &&
+        _heartOrLungProblems != null &&
+        _hadCovid19 != null &&
+        _hivAidsPositive != null &&
+        _hadCancer != null &&
+        _hadVaccination != null;
+  }
+
   @override
   Widget build(BuildContext context) {
     void _toggleVerification() {
@@ -29,7 +39,7 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
     }
 
     bool _isVerificationComplete() {
-      return _isVerified;
+      return _areAllQuestionsAnswered() && _isVerified;
     }
 
     final double deviceWidth = MediaQuery.of(context).size.width;
@@ -67,354 +77,55 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                   thickness: 1,
                 ),
                 SizedBox(height: deviceHeight * 0.017),
-                Padding(
-                  padding: EdgeInsets.only(left: deviceWidth * 0.02, right: deviceWidth * 0.02),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Do you have diabetes?",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-                      ),
-                    ],
-                  ),
+                _buildQuestion(
+                  question: "Do you have diabetes?",
+                  groupValue: _hasDiabetes,
+                  onChanged: (value) => setState(() { _hasDiabetes = value; }),
                 ),
-                SizedBox(height: deviceHeight * 0.003),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Radio(
-                          value: true,
-                          groupValue: _hasDiabetes,
-                          onChanged: (value) {
-                            setState(() {
-                              _hasDiabetes = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("Yes", style: TextStyle(fontWeight: FontWeight.bold, color: _hasDiabetes == true ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                    SizedBox(width: deviceWidth * 0.009),
-                    Row(
-                      children: [
-                        Radio(
-                          value: false,
-                          groupValue: _hasDiabetes,
-                          onChanged: (value) {
-                            setState(() {
-                              _hasDiabetes = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("No", style: TextStyle(fontWeight: FontWeight.bold, color: _hasDiabetes == false ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                  ],
+                const Divider(color: Colors.grey, thickness: 1),
+                _buildQuestion(
+                  question: "Have you ever had problems with your heart or lungs?",
+                  groupValue: _heartOrLungProblems,
+                  onChanged: (value) => setState(() { _heartOrLungProblems = value; }),
                 ),
-                const Divider(
-                  color: Colors.grey,
-                  thickness: 1,
+                const Divider(color: Colors.grey, thickness: 1),
+                _buildQuestion(
+                  question: "In the last 28 days have you had COVID-19?",
+                  groupValue: _hadCovid19,
+                  onChanged: (value) => setState(() { _hadCovid19 = value; }),
                 ),
-
-                SizedBox(height: deviceHeight * 0.014),
-                Padding(
-                  padding: EdgeInsets.only(left: deviceWidth * 0.02, right: deviceWidth * 0.02),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          "Have you ever had problems with your heart or lungs?",
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-                        ),
-                      ),
-                    ],
-                  ),
+                const Divider(color: Colors.grey, thickness: 1),
+                _buildQuestion(
+                  question: "Have you ever had a positive test for HIV/AIDS virus?",
+                  groupValue: _hivAidsPositive,
+                  onChanged: (value) => setState(() { _hivAidsPositive = value; }),
                 ),
-                SizedBox(height: deviceHeight * 0.003),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Radio(
-                          value: true,
-                          groupValue: _heartOrLungProblems,
-                          onChanged: (value) {
-                            setState(() {
-                              _heartOrLungProblems = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("Yes", style: TextStyle(fontWeight: FontWeight.bold, color: _heartOrLungProblems == true ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                    SizedBox(width: deviceWidth * 0.009),
-                    Row(
-                      children: [
-                        Radio(
-                          value: false,
-                          groupValue: _heartOrLungProblems,
-                          onChanged: (value) {
-                            setState(() {
-                              _heartOrLungProblems = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("No", style: TextStyle(fontWeight: FontWeight.bold, color: _heartOrLungProblems == false ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                  ],
+                const Divider(color: Colors.grey, thickness: 1),
+                _buildQuestion(
+                  question: "Have you ever had cancer?",
+                  groupValue: _hadCancer,
+                  onChanged: (value) => setState(() { _hadCancer = value; }),
                 ),
-                const Divider(
-                  color: Colors.grey,
-                  thickness: 1,
+                const Divider(color: Colors.grey, thickness: 1),
+                _buildQuestion(
+                  question: "In the last 3 months have you had a vaccination?",
+                  groupValue: _hadVaccination,
+                  onChanged: (value) => setState(() { _hadVaccination = value; }),
                 ),
-
-                SizedBox(height: deviceHeight * 0.014),
-                Padding(
-                  padding: EdgeInsets.only(left: deviceWidth * 0.02, right: deviceWidth * 0.02),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "In the last 28 days have you had COVID-19?",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: deviceHeight * 0.003),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Radio(
-                          value: true,
-                          groupValue: _hadCovid19,
-                          onChanged: (value) {
-                            setState(() {
-                              _hadCovid19 = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("Yes", style: TextStyle(fontWeight: FontWeight.bold, color: _hadCovid19 == true ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                    SizedBox(width: deviceWidth * 0.009),
-                    Row(
-                      children: [
-                        Radio(
-                          value: false,
-                          groupValue: _hadCovid19,
-                          onChanged: (value) {
-                            setState(() {
-                              _hadCovid19 = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("No", style: TextStyle(fontWeight: FontWeight.bold, color: _hadCovid19 == false ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                  ],
-                ),
-                const Divider(
-                  color: Colors.grey,
-                  thickness: 1,
-                ),
-
-                SizedBox(height: deviceHeight * 0.014),
-                Padding(
-                  padding: EdgeInsets.only(left: deviceWidth * 0.02, right: deviceWidth * 0.02),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          "Have you ever had a positive test for HIV/AIDS virus?",
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: deviceHeight * 0.003),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Radio(
-                          value: true,
-                          groupValue: _hivAidsPositive,
-                          onChanged: (value) {
-                            setState(() {
-                              _hivAidsPositive = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("Yes", style: TextStyle(fontWeight: FontWeight.bold, color: _hivAidsPositive == true ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                    SizedBox(width: deviceWidth * 0.009),
-                    Row(
-                      children: [
-                        Radio(
-                          value: false,
-                          groupValue: _hivAidsPositive,
-                          onChanged: (value) {
-                            setState(() {
-                              _hivAidsPositive = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("No", style: TextStyle(fontWeight: FontWeight.bold, color: _hivAidsPositive == false ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                  ],
-                ),
-                const Divider(
-                  color: Colors.grey,
-                  thickness: 1,
-                ),
-
-                SizedBox(height: deviceHeight * 0.014),
-                Padding(
-                  padding: EdgeInsets.only(left: deviceWidth * 0.02, right: deviceWidth * 0.02),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Have you ever had cancer?",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: deviceHeight * 0.003),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Radio(
-                          value: true,
-                          groupValue: _hadCancer,
-                          onChanged: (value) {
-                            setState(() {
-                              _hadCancer = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("Yes", style: TextStyle(fontWeight: FontWeight.bold, color: _hadCancer == true ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                    SizedBox(width: deviceWidth * 0.009),
-                    Row(
-                      children: [
-                        Radio(
-                          value: false,
-                          groupValue: _hadCancer,
-                          onChanged: (value) {
-                            setState(() {
-                              _hadCancer = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("No", style: TextStyle(fontWeight: FontWeight.bold, color: _hadCancer == false ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                  ],
-                ),
-                const Divider(
-                  color: Colors.grey,
-                  thickness: 1,
-                ),
-
-                SizedBox(height: deviceHeight * 0.014),
-                Padding(
-                  padding: EdgeInsets.only(left: deviceWidth * 0.02, right: deviceWidth * 0.02),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "In the last 3 months have you had a vaccination?",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: deviceHeight * 0.003),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Radio(
-                          value: true,
-                          groupValue: _hadVaccination,
-                          onChanged: (value) {
-                            setState(() {
-                              _hadVaccination = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("Yes", style: TextStyle(fontWeight: FontWeight.bold, color: _hadVaccination == true ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                    SizedBox(width: deviceWidth * 0.009),
-                    Row(
-                      children: [
-                        Radio(
-                          value: false,
-                          groupValue: _hadVaccination,
-                          onChanged: (value) {
-                            setState(() {
-                              _hadVaccination = value;
-                            });
-                          },
-                          activeColor: Colors.redAccent,
-                        ),
-                        Text("No", style: TextStyle(fontWeight: FontWeight.bold, color: _hadVaccination == false ? Colors.redAccent : Colors.grey)),
-                      ],
-                    ),
-                  ],
-                ),
-                const Divider(
-                  color: Colors.grey,
-                  thickness: 1,
-                ),
-
+                const Divider(color: Colors.grey, thickness: 1),
                 Padding(
                   padding: EdgeInsets.only(left: deviceWidth * 0.02, right: deviceWidth * 0.02),
                   child: Row(
                     children: [
                       GestureDetector(
                           onTap: _toggleVerification,
-                          child: Image.asset(_isVerified ? "assets/verified.png" : "assets/verify.png",)
+                          child: Image.asset(_isVerified ? "assets/verified.png" : "assets/verify.png")
                       ),
-                      SizedBox(width: deviceWidth*0.007,),
-                      Flexible(child: Text("By clicking you agree to our terms and condition",style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),)),
-
+                      SizedBox(width: deviceWidth * 0.007),
+                      Flexible(child: Text("By clicking you agree to our terms and conditions", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold))),
                     ],
                   ),
                 ),
-
                 SizedBox(height: deviceHeight * 0.01),
                 Padding(
                   padding: EdgeInsets.only(left: deviceWidth * 0.02, right: deviceWidth * 0.02),
@@ -432,21 +143,48 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                         ),
                         onPressed: _isVerificationComplete()
                             ? () async {
-
                           var currentUser = FirebaseAuth.instance.currentUser;
-                          await FirebaseFirestore.instance
+                          if (currentUser == null) return;
+
+                          // Reference to Firestore
+                          var firestore = FirebaseFirestore.instance;
+
+                          // Construct the session ID in the format `${hospitalId}_${sessionName}`
+                          var sessionId = '${currentUser.uid}_${widget.sessionName}';
+
+                          // Save selected options to sessions collection
+                          await firestore
                               .collection('hospital')
-                              .doc(currentUser?.uid) // Using the hospital ID passed to this widget
+                              .doc(currentUser.uid)
                               .collection('sessions')
-                              .doc() // Using the session name passed to this widget
+                              .doc(widget.sessionName) // Use sessionName to identify the session
                               .update({
-                            'donors.${widget.userId}.status': 'done', // Update only the status
+                            'donors.${widget.userId}.status': 'accepted',
+                            'donors.${widget.userId}.questions': {
+                              'hasDiabetes': _hasDiabetes,
+                              'heartOrLungProblems': _heartOrLungProblems,
+                              'hadCovid19': _hadCovid19,
+                              'hivAidsPositive': _hivAidsPositive,
+                              'hadCancer': _hadCancer,
+                              'hadVaccination': _hadVaccination,
+                            },
                           });
 
+                          // Update donation status for user
+                          await firestore
+                              .collection('users')
+                              .doc(widget.userId)
+                              .update({
+                            'donations.$sessionId.donationStatus': 'donated',
+                            'lastDonationDate': FieldValue.serverTimestamp(), // Set the current datetime
+                            'lifeSaved': FieldValue.increment(1) // Increment lifeSaved by 1
+                          });
 
                           Navigator.of(context).pop();
                         }
                             : null,
+
+
                         child: Text(
                           'Become a donor',
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17),
@@ -460,6 +198,53 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildQuestion({
+    required String question,
+    required bool? groupValue,
+    required ValueChanged<bool?> onChanged,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02, right: MediaQuery.of(context).size.width * 0.02),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            question,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+          ),
+          SizedBox(height: 8.0),
+          Row(
+            children: [
+              Row(
+                children: [
+                  Radio(
+                    value: true,
+                    groupValue: groupValue,
+                    onChanged: onChanged,
+                    activeColor: Colors.redAccent,
+                  ),
+                  Text("Yes", style: TextStyle(fontWeight: FontWeight.bold, color: groupValue == true ? Colors.redAccent : Colors.grey)),
+                ],
+              ),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.009),
+              Row(
+                children: [
+                  Radio(
+                    value: false,
+                    groupValue: groupValue,
+                    onChanged: onChanged,
+                    activeColor: Colors.redAccent,
+                  ),
+                  Text("No", style: TextStyle(fontWeight: FontWeight.bold, color: groupValue == false ? Colors.redAccent : Colors.grey)),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

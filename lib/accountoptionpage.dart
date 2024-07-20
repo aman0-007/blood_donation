@@ -19,7 +19,7 @@ class _AccountOptionPageState extends State<AccountOptionPage> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(top: 15.0, right: 10.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

@@ -19,8 +19,8 @@ class _RegisteScreenState extends State<RegisteScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   TextEditingController dobController = TextEditingController();
   TextEditingController genderController = TextEditingController();
-  //blood group
-  //home location
+
+
   final List<String> _bloodGroups = [
     'A+',
     'A-',

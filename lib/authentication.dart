@@ -67,7 +67,6 @@ class Authentication {
         'BloodGroup': bg,
         'eligibilityToDonate': "pending",
       });
-
       await FirebaseFirestore.instance.collection('donors').doc(userCredential.user?.uid).set({});
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(

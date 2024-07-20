@@ -1,6 +1,6 @@
 import 'package:blood_donor/Hospitalcamps.dart';
 import 'package:blood_donor/Hospitalrecords.dart';
-import 'package:blood_donor/notification.dart';
+import 'package:blood_donor/authentication.dart';
 import 'package:flutter/material.dart';
 
 class Hospitaldashboard extends StatefulWidget {
@@ -11,6 +11,7 @@ class Hospitaldashboard extends StatefulWidget {
 }
 
 class _HospitaldashboardState extends State<Hospitaldashboard> {
+  final Authentication _auth = Authentication();
 
   @override
   Widget build(BuildContext context) {
@@ -29,114 +30,93 @@ class _HospitaldashboardState extends State<Hospitaldashboard> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: GridView(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16.0,
+            mainAxisSpacing: 16.0,
+            childAspectRatio: 1.2,
+          ),
+          children: [
+            _buildDashboardItem(
+              context,
+              "Donation Camps",
+              "assets/blooddonationcamp.png",
+              Hospitalcamps(),
+            ),
+            _buildDashboardItem(
+              context,
+              "Records",
+              "assets/blood-type.png",
+              Hospitalrecords(),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {
+            _auth.signOut(context); // Call sign-out function from Authentication class
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.redAccent, // Button color
+            foregroundColor: Colors.white,    // Text color
+            minimumSize: Size(double.infinity, 50), // Increase button width and height
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            elevation: 5,
+          ),
+          child: const Text('Sign Out'),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardItem(BuildContext context, String title, String imagePath, Widget destination) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => destination),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            GestureDetector(
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Hospitalcamps()),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(right: 30.0),
-                child: SizedBox(
-                  width: 150,
-                  height: 150,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5), // Border color
-                        width: 1, // Border width
-                      ),
-                      borderRadius: BorderRadius.circular(10), // Border radius
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1), // Shadow color
-                          spreadRadius: 1, // Spread radius
-                          blurRadius: 2, // Blur radius
-                          offset: const Offset(0, 2), // Offset
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset("assets/blooddonationcamp.png"),
-                          const SizedBox(height: 7),
-                          const Text(
-                            "Donation Camps",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+            Image.asset(
+              imagePath,
+              height: 80,
+              width: 80,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[700],
               ),
             ),
-            const SizedBox(height: 25),
-            GestureDetector(
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Hospitalrecords()),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(right: 30.0),
-                child: SizedBox(
-                  height: 150,
-                  width: 150,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5), // Border color
-                        width: 1, // Border width
-                      ),
-                      borderRadius: BorderRadius.circular(10), // Border radius
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1), // Shadow color
-                          spreadRadius: 1, // Spread radius
-                          blurRadius: 2, // Blur radius
-                          offset: const Offset(0, 2), // Offset
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset("assets/blood-type.png"),
-                          const SizedBox(height: 7),
-                          const Text(
-                            "Records",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
           ],
         ),
       ),

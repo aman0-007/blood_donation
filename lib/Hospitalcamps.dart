@@ -1,5 +1,5 @@
+import 'package:blood_donor/hospitalactivesessions.dart';
 import 'package:blood_donor/startsessionpage.dart';
-import 'package:blood_donor/takeblood.dart';
 import 'package:flutter/material.dart';
 
 class Hospitalcamps extends StatefulWidget {
@@ -13,62 +13,80 @@ class _HospitalcampsState extends State<Hospitalcamps> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set page color as white
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Hospital Camps"), // App bar title
+        title: const Text("Hospital Camps"),
+        backgroundColor: Colors.redAccent, // App bar color
+        elevation: 0, // Remove shadow for a cleaner look
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Start Session Button
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const Startsessionpage()),
                 );
               },
-              child: Container(
-                width: 200,
-                height: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.redAccent, width: 2),
-                  color: Colors.white,
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Center(
-                  child: Text(
-                    "Start Session",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                child: Container(
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.redAccent, width: 2),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Start Session",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.redAccent, // Text color
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
+            // Live Session Button
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const Takeblood()),
+                  MaterialPageRoute(builder: (context) => const Hospitalactivesessions()),
                 );
               },
-              child: Container(
-                width: 200,
-                height: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.redAccent, width: 2),
-                  color: Colors.white,
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Center(
-                  child: Text(
-                    "Live Session",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                child: Container(
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.redAccent, width: 2),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Live Session",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.redAccent, // Text color
+                      ),
                     ),
                   ),
                 ),

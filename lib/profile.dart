@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:blood_donor/authentication.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
@@ -44,6 +45,29 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Widget buildTextField({required String label, required TextEditingController controller}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+      child: TextField(
+        controller: controller,
+        readOnly: true,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: Colors.grey, fontSize: 12),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey.shade500),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          filled: true,
+          fillColor: Colors.grey.shade100,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +77,10 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(height: 60,),
-
+            SizedBox(height: 60),
             Container(
-              width: MediaQuery.of(context).size.width * 0.55,
-              height: MediaQuery.of(context).size.height * 0.21,
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.25,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.0),
                 border: Border.all(width: 2.0, color: Colors.grey.withOpacity(0.5)),
@@ -80,17 +103,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Image.asset(
                         'assets/life_saved.png',
-                        width: MediaQuery.of(context).size.width * 0.07,
-                        height: MediaQuery.of(context).size.height * 0.07,
+                        width: MediaQuery.of(context).size.width * 0.12,
+                        height: MediaQuery.of(context).size.height * 0.12,
                       ),
                       const SizedBox(height: 8),
                       Text(
                         lifeSavedController.text,
-                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       const Text(
                         "Life saved",
-                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 14),
                       ),
                     ],
                   ),
@@ -99,17 +122,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Image.asset(
                         'assets/blood_group.png',
-                        width: MediaQuery.of(context).size.width * 0.07,
-                        height: MediaQuery.of(context).size.height * 0.07,
+                        width: MediaQuery.of(context).size.width * 0.12,
+                        height: MediaQuery.of(context).size.height * 0.12,
                       ),
                       const SizedBox(height: 8),
                       Text(
                         bloodGroupController.text,
-                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       const Text(
                         "Blood Group",
-                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 14),
                       ),
                     ],
                   ),
@@ -117,132 +140,29 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: 20),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 40, top: 20),
-                  child: Text(
-                    "Name",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
-                controller: nameController,
-                readOnly: true, // Disable editing
-              ),
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 40, top: 20),
-                  child: Text(
-                    "Gender",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
-                controller: genderController,
-                readOnly: true, // Disable editing
-              ),
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 40, top: 20),
-                  child: Text(
-                    "Email",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
-                controller: emailController,
-                readOnly: true, // Disable editing
-              ),
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 40, top: 20),
-                  child: Text(
-                    "Phone",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
-                controller: phoneController,
-                readOnly: true, // Disable editing
-              ),
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 40, top: 20),
-                  child: Text(
-                    "Date of Birth",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
-                controller: dobController,
-                readOnly: true, // Disable editing
-              ),
-            ),
+            buildTextField(label: "Name", controller: nameController),
+            buildTextField(label: "Gender", controller: genderController),
+            buildTextField(label: "Email", controller: emailController),
+            buildTextField(label: "Phone", controller: phoneController),
+            buildTextField(label: "Date of Birth", controller: dobController),
             const SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 80,vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: ElevatedButton(
                 onPressed: () {
                   _auth.signOut(context); // Call sign-out function from Authentication class
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent, // Button color
-                  foregroundColor: Colors.white,    // Text color
+                  foregroundColor: Colors.white, // Text color
                   minimumSize: Size(double.infinity, 50), // Increase button width and height
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-                child: const Text('Sign Out'),
+                child: const Text('Sign Out', style: TextStyle(fontSize: 18)),
               ),
             ),
-
             const SizedBox(height: 20),
           ],
         ),

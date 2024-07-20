@@ -80,7 +80,7 @@ class _FinddonorState extends State<Finddonor> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 22.0, right: 100, top: 7),
+                    padding: const EdgeInsets.only(left: 22.0, right: 22.0, top: 7),
                     child: InputDecorator(
                       decoration: InputDecoration(
                         filled: true,
@@ -131,7 +131,7 @@ class _FinddonorState extends State<Finddonor> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 22.0, right: 100, top: 7),
+                    padding: const EdgeInsets.only(left: 22.0, right: 22.0, top: 7),
                     child: TextField(
                       decoration: InputDecoration(
                         filled: true,
@@ -148,7 +148,7 @@ class _FinddonorState extends State<Finddonor> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 135.0, top: 40, bottom: 40, right: 130),
+                    padding: const EdgeInsets.only(left: 22.0, right: 22.0, top: 40, bottom: 40),
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(

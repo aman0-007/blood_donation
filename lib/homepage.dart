@@ -1,4 +1,5 @@
 import 'package:blood_donor/activesessions.dart';
+import 'package:blood_donor/authentication.dart';
 import 'package:blood_donor/bloodbanks.dart';
 import 'package:blood_donor/bloodinfo.dart';
 import 'package:blood_donor/checkeligibility.dart';
@@ -31,6 +32,20 @@ class _HomePageState extends State<HomePage> {
 
 
 
+  late Future<String> _eligibilityStatusFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _eligibilityStatusFuture = getUserEligibilityStatus();
+  }
+
+  Future<String> getUserEligibilityStatus() async {
+    // Replace with your actual logic to get the user's eligibility status from Firestore
+    final String userId = await Authentication().getCurrentUser()?.uid ?? '';
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    return userDoc['eligibilityToDonate'] ?? 'unknown';
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,113 +158,119 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 25),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 5),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        color: Colors.yellowAccent,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            spreadRadius: 3,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: FutureBuilder<String>(
-                        future: getUserEligibilityStatus(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return const Center(child: Text('Error fetching data'));
-                          } else if (snapshot.hasData) {
-                            String status = snapshot.data!;
-                            if (status == 'eligible') {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 15),
-                                child: Row(
-                                  children: [
-                                    const Text(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      color: Colors.yellowAccent,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 3,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: FutureBuilder<String>(
+                      future: _eligibilityStatusFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return const Center(child: Text('Error fetching data'));
+                        } else if (snapshot.hasData) {
+                          String status = snapshot.data!;
+                          if (status == 'eligible') {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+                                    child: const Text(
                                       "You are eligible to donate blood",
                                       style: TextStyle(
                                         color: Colors.green,
-                                        fontWeight: FontWeight.w400,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
-                                    const Spacer(),
-                                    const Icon(
-                                      Icons.check_circle_rounded, // Check icon
-                                      color: Colors.green, // Green color for the icon
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else if (status == 'notEligible') {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 15),
-                                child: Row(
-                                  children: [
-                                    const Text(
+                                  ),
+                                  const Spacer(),
+                                  const Icon(
+                                    Icons.check_circle_rounded,
+                                    color: Colors.green,
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else if (status == 'notEligible') {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+                                    child: const Text(
                                       "Not eligible to donate blood",
                                       style: TextStyle(
                                         color: Colors.red,
-                                        fontWeight: FontWeight.w400,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
-                                    const Spacer(),
-                                    const Icon(
-                                      Icons.cancel_rounded, // Cross icon
-                                      color: Colors.red, // Red color for the icon
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 15),
-                                child: Row(
-                                  children: [
-                                    const Text(
-                                      "Check your eligibility to Donate",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    IconButton(
-                                      icon: const Icon(Icons.arrow_forward_ios_rounded),
-                                      color: Colors.black,
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => const Checkeligibility(),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
+                                  ),
+                                  const Spacer(),
+                                  const Icon(
+                                    Icons.cancel_rounded,
+                                    color: Colors.red,
+                                  ),
+                                ],
+                              ),
+                            );
                           } else {
-                            return const Center(child: Text('No data available'));
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    "Check your eligibility to Donate",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  IconButton(
+                                    icon: const Icon(Icons.arrow_forward_ios_rounded),
+                                    color: Colors.black,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const Checkeligibility(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
                           }
-                        },
-                      ),
+                        } else {
+                          return const Center(child: Text('No data available'));
+                        }
+                      },
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
             const SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

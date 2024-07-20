@@ -56,8 +56,8 @@ class _BloodbanksState extends State<Bloodbanks> {
 
   @override
   Widget build(BuildContext context) {
+    // Show a loading indicator while waiting for the user position
     if (_userPosition == null) {
-      // If _userPosition is null, display a loading indicator or handle the absence of position data
       return Scaffold(
         appBar: AppBar(
           title: Text('Loading...'),

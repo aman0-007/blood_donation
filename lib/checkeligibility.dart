@@ -1,5 +1,10 @@
+import 'package:blood_donor/authentication.dart';
+import 'package:blood_donor/bottomnavigationpage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+int score = 0;
 class Checkeligibility extends StatefulWidget {
   const Checkeligibility({super.key});
   @override
@@ -7,19 +12,38 @@ class Checkeligibility extends StatefulWidget {
 }
 
 class _CheckeligibilityState extends State<Checkeligibility> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+
   int _currentIndex = 0;
+
   late List<Widget> _containers;
 
   @override
   void initState() {
+
     super.initState();
     _containers = [
-      const ContainerOne(),
-      const ContainerTwo(),
-      const ContainerThree(),
-      const ContainerFour(),
-      const ContainerFive(),
+      ContainerOne(onYesPressed: _increaseScoreAndNavigate, onSkipPressed: _decreaseScoreAndNavigate),
+      ContainerTwo(onYesPressed: _increaseScoreAndNavigate, onSkipPressed: _decreaseScoreAndNavigate),
+      ContainerThree(onYesPressed: _increaseScoreAndNavigate, onSkipPressed: _decreaseScoreAndNavigate),
+      ContainerFour(onYesPressed: _increaseScoreAndNavigate, onSkipPressed: _decreaseScoreAndNavigate),
+      ContainerFive(score: score),
     ];
+  }
+
+  void _increaseScoreAndNavigate() {
+    setState(() {
+      score--;
+      _navigateForward();
+    });
+  }
+
+  void _decreaseScoreAndNavigate() {
+    setState(() {
+      score++;
+      _navigateForward();
+    });
   }
 
   void _navigateForward() {
@@ -109,7 +133,7 @@ class _CheckeligibilityState extends State<Checkeligibility> {
           const Positioned(
             top: 27,
             child: Text(
-              "1/4",
+              "Eligibility",
               style: TextStyle(
                   color: Color(0xFFCB0909),
                   fontSize: 19,
@@ -187,7 +211,10 @@ class _CheckeligibilityState extends State<Checkeligibility> {
 
 
 class ContainerOne extends StatelessWidget {
-  const ContainerOne({super.key});
+  final VoidCallback onYesPressed;
+  final VoidCallback onSkipPressed;
+
+  const ContainerOne({super.key,required this.onYesPressed, required this.onSkipPressed});
 
   @override
   Widget build(BuildContext context){
@@ -229,7 +256,7 @@ class ContainerOne extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: "50kg?",
+                            text: "45kg?",
                             style: TextStyle(
                               fontSize: 23,
                               fontWeight: FontWeight.bold,
@@ -248,9 +275,7 @@ class ContainerOne extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 50.0,right: 50,top: 30,bottom: 25),
                     child: ElevatedButton(
-                      onPressed: () {
-                        //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                      },
+                      onPressed: onSkipPressed,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
                         backgroundColor: Colors.white,
@@ -278,9 +303,7 @@ class ContainerOne extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 50.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                      },
+                      onPressed:onYesPressed,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
                         backgroundColor: Colors.white,
@@ -320,7 +343,7 @@ class ContainerOne extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 10.0,bottom: 9),
                   child: IconButton(
-                    onPressed: (){},
+                    onPressed: onYesPressed,
                     icon: const Icon(Icons.arrow_forward_rounded),
                     color: const Color(0xFFCB0909),
                   ),
@@ -336,7 +359,9 @@ class ContainerOne extends StatelessWidget {
 
 
 class ContainerTwo extends StatelessWidget {
-  const ContainerTwo({super.key});
+  final VoidCallback onYesPressed;
+  final VoidCallback onSkipPressed;
+  const ContainerTwo({super.key,required this.onYesPressed, required this.onSkipPressed});
 
   @override
   Widget build(BuildContext context){
@@ -489,9 +514,7 @@ class ContainerTwo extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 50.0,right: 50,top: 30,bottom: 25),
                     child: ElevatedButton(
-                      onPressed: () {
-                        //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                      },
+                      onPressed: onSkipPressed,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
                         backgroundColor: Colors.white,
@@ -519,9 +542,7 @@ class ContainerTwo extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 50.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                      },
+                      onPressed: onYesPressed,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
                         backgroundColor: Colors.white,
@@ -561,7 +582,7 @@ class ContainerTwo extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 10.0,bottom: 9),
                   child: IconButton(
-                    onPressed: (){},
+                    onPressed: onYesPressed,
                     icon: const Icon(Icons.arrow_forward_rounded),
                     color: const Color(0xFFCB0909),
                   ),
@@ -577,7 +598,9 @@ class ContainerTwo extends StatelessWidget {
 
 
 class ContainerThree extends StatelessWidget {
-  const ContainerThree({super.key});
+  final VoidCallback onYesPressed;
+  final VoidCallback onSkipPressed;
+  const ContainerThree({super.key,required this.onYesPressed, required this.onSkipPressed});
 
   @override
   Widget build(BuildContext context){
@@ -638,9 +661,7 @@ class ContainerThree extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 50.0,right: 50,top: 30,bottom: 25),
                     child: ElevatedButton(
-                      onPressed: () {
-                        //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                      },
+                      onPressed: onSkipPressed,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
                         backgroundColor: Colors.white,
@@ -668,9 +689,7 @@ class ContainerThree extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 50.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                      },
+                      onPressed: onYesPressed,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
                         backgroundColor: Colors.white,
@@ -710,7 +729,7 @@ class ContainerThree extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 10.0,bottom: 9),
                   child: IconButton(
-                    onPressed: (){},
+                    onPressed: onYesPressed,
                     icon: const Icon(Icons.arrow_forward_rounded),
                     color: const Color(0xFFCB0909),
                   ),
@@ -726,7 +745,9 @@ class ContainerThree extends StatelessWidget {
 
 
 class ContainerFour extends StatelessWidget {
-  const ContainerFour({super.key});
+  final VoidCallback onYesPressed;
+  final VoidCallback onSkipPressed;
+  const ContainerFour({super.key,required this.onYesPressed, required this.onSkipPressed});
 
   @override
   Widget build(BuildContext context){
@@ -795,9 +816,7 @@ class ContainerFour extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 50.0,right: 50,top: 30,bottom: 25),
                     child: ElevatedButton(
-                      onPressed: () {
-                        //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                      },
+                      onPressed: onSkipPressed,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
                         backgroundColor: Colors.white,
@@ -825,9 +844,7 @@ class ContainerFour extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 50.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                      },
+                      onPressed: onYesPressed,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
                         backgroundColor: Colors.white,
@@ -867,7 +884,7 @@ class ContainerFour extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 10.0,bottom: 9),
                   child: IconButton(
-                    onPressed: (){},
+                    onPressed: onYesPressed,
                     icon: const Icon(Icons.arrow_forward_rounded),
                     color: const Color(0xFFCB0909),
                   ),
@@ -883,7 +900,9 @@ class ContainerFour extends StatelessWidget {
 
 
 class ContainerFive extends StatelessWidget {
-  const ContainerFive({super.key});
+
+  final int score;
+  const ContainerFive({super.key,required this.score});
 
   @override
   Widget build(BuildContext context){
@@ -944,7 +963,16 @@ class ContainerFive extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 50.0,right: 50,top: 30,bottom: 25),
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        final Authentication _auth = Authentication();
+                        print(score);
+                        final eligibilityStatus = score >= 4 ? "eligible" : "notEligible";
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(_auth.getCurrentUser()?.uid)
+                            .update({'eligibilityToDonate': eligibilityStatus});
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const Bottomnavigationpage()));
+
                         //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
                       },
                       style: ElevatedButton.styleFrom(
@@ -975,7 +1003,7 @@ class ContainerFive extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 50.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const Bottomnavigationpage()));
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
@@ -999,30 +1027,6 @@ class ContainerFive extends StatelessWidget {
               ],
             ),
             const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(right: 4.0,bottom: 10),
-                  child: Text(
-                    "Skip",
-                    style: TextStyle(
-                        color: Color(0xFFCB0909),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0,bottom: 9),
-                  child: IconButton(
-                    onPressed: (){},
-                    icon: const Icon(Icons.arrow_forward_rounded),
-                    color: const Color(0xFFCB0909),
-                  ),
-                ),
-              ],
-            )
           ],
         ),
       ),

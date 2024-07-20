@@ -17,15 +17,12 @@ class _StartsessionpageState extends State<Startsessionpage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _landmarkController = TextEditingController();
-
   final TextEditingController _address1Controller = TextEditingController();
+
   String _selectedAddress = '';
   TimeOfDay? _startTime;
   DateTime? _selectedDate;
   Position? _currentPosition;
-
-
-
 
   void _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
@@ -34,11 +31,10 @@ class _StartsessionpageState extends State<Startsessionpage> {
     );
     if (pickedTime != null && pickedTime != _startTime) {
       setState(() {
-        _startTime = pickedTime; // Only time is considered, no date component
+        _startTime = pickedTime;
       });
     }
   }
-
 
   void _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -49,12 +45,10 @@ class _StartsessionpageState extends State<Startsessionpage> {
     );
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
-        _selectedDate = pickedDate; // Only the date part is considered
+        _selectedDate = pickedDate;
       });
     }
   }
-
-
 
   void _startDonationSession() {
     String name = _nameController.text;
@@ -64,18 +58,13 @@ class _StartsessionpageState extends State<Startsessionpage> {
 
     DateTime? startTime;
     if (_startTime != null) {
-      // Convert TimeOfDay to DateTime
       TimeOfDay timeOfDay = _startTime!;
       DateTime now = DateTime.now();
       startTime = DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
     }
 
-    DateTime? date;
-    if (_selectedDate != null) {
-      date = _selectedDate;
-    }
+    DateTime? date = _selectedDate;
 
-    // Validate all fields before proceeding
     if (name.isNotEmpty &&
         email.isNotEmpty &&
         contact.isNotEmpty &&
@@ -84,7 +73,6 @@ class _StartsessionpageState extends State<Startsessionpage> {
         startTime != null &&
         date != null) {
       try {
-        // Call Firebase function to save session details
         _authentication.startDonationSession(
           context,
           name,
@@ -103,7 +91,7 @@ class _StartsessionpageState extends State<Startsessionpage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please fill in all required fields.'),
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.redAccent,
           duration: Duration(seconds: 3),
         ),
       );
@@ -113,7 +101,7 @@ class _StartsessionpageState extends State<Startsessionpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.redAccent,
         title: Text('Session Details'),
@@ -125,49 +113,56 @@ class _StartsessionpageState extends State<Startsessionpage> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(16.0),
         child: Container(
-          padding: EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Colors.redAccent),
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 3),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('NAME'),
-              TextField(
+              _buildSectionTitle('Name'),
+              _buildTextField(
                 controller: _nameController,
-                decoration: InputDecoration(
-                  hintText: 'Enter your name',
-                ),
+                hintText: 'Enter your name',
               ),
-              SizedBox(height: 10.0),
-              Text('EMAIL AND CONTACT'),
-              TextField(
+              SizedBox(height: 16.0),
+              _buildSectionTitle('Email and Contact'),
+              _buildTextField(
                 controller: _emailController,
-                decoration: InputDecoration(
-                  hintText: 'Enter your email',
-                ),
+                hintText: 'Enter your email',
+                keyboardType: TextInputType.emailAddress,
               ),
-              SizedBox(height: 10.0),
-              TextField(
+              SizedBox(height: 16.0),
+              _buildTextField(
                 controller: _contactController,
-                decoration: InputDecoration(
-                  hintText: 'Enter your contact number',
-                ),
+                hintText: 'Enter your contact number',
+                keyboardType: TextInputType.phone,
               ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 16.0),
               Row(
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('LOCATION'),
-                        TextField(
+                        _buildSectionTitle('Location'),
+                        _buildTextField(
                           controller: _address1Controller,
+                          hintText: 'Enter address',
+                          readOnly: true,
                         ),
+                        SizedBox(height: 8.0),
                         ElevatedButton.icon(
                           onPressed: () async {
                             final result = await Navigator.push(
@@ -181,7 +176,7 @@ class _StartsessionpageState extends State<Startsessionpage> {
                                 _currentPosition = Position(
                                   latitude: result['position'].latitude,
                                   longitude: result['position'].longitude,
-                                  accuracy: 0.0, // provide an appropriate accuracy value
+                                  accuracy: 0.0,
                                   altitude: 0.0,
                                   heading: 0.0,
                                   speed: 0.0,
@@ -195,96 +190,161 @@ class _StartsessionpageState extends State<Startsessionpage> {
                               });
                             }
                           },
-                          icon: const Icon(Icons.location_on),
-                          label: const Text('Select Location'),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.redAccent), // Background color
-                            foregroundColor: MaterialStateProperty.all<Color>(
-                                Colors.white), // Text color
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
+                          icon: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: const Icon(Icons.location_on),
+                          ),
+                          label: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: const Text('Select Location'),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
-                            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              const EdgeInsets.symmetric(
-                                  vertical: 12.0, horizontal: 16.0),
-                            ),
-                            minimumSize: MaterialStateProperty.all<Size>(
-                              const Size(double.infinity, 0), // full width available
-                            ),
+                            padding: EdgeInsets.symmetric(vertical: 12.0),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(width: 10.0),
+                  SizedBox(width: 16.0),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('LANDMARK'),
-                        TextField(
+                        _buildSectionTitle('Landmark'),
+                        _buildTextField(
                           controller: _landmarkController,
-                          decoration: InputDecoration(
-                            hintText: 'Enter landmark',
-                          ),
+                          hintText: 'Enter landmark',
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 16.0),
               Row(
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('START TIME'),
+                        _buildSectionTitle('Start Time'),
                         ElevatedButton(
                           onPressed: () {
                             _selectTime(context);
                           },
-                          child: Text(_startTime != null ? _startTime!.format(context) : 'Select Time'),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Text(
+                              _startTime != null ? _startTime!.format(context) : 'Select Time',
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 12.0),
+                          ),
                         ),
-
                       ],
                     ),
                   ),
-                  SizedBox(width: 10.0),
+                  SizedBox(width: 16.0),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('DATE'),
+                        _buildSectionTitle('Date'),
                         ElevatedButton(
                           onPressed: () {
                             _selectDate(context);
                           },
-                          child: Text(_selectedDate != null ? DateFormat('dd-MM-yyyy').format(_selectedDate!) : 'Select Date'),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Text(
+                              _selectedDate != null ? DateFormat('dd-MM-yyyy').format(_selectedDate!) : 'Select Date',
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 12.0),
+                          ),
                         ),
-
                       ],
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: 24.0),
               Center(
                 child: ElevatedButton(
                   onPressed: () {
                     _startDonationSession();
                   },
-                  child: Text('Start'),
+                  child: Text('Start Session', style: TextStyle(fontSize: 18.0)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.redAccent,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    bool readOnly = false,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        filled: true,
+        fillColor: Colors.grey[200],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 12.0),
+      ),
+      readOnly: readOnly,
+      keyboardType: keyboardType,
     );
   }
 }

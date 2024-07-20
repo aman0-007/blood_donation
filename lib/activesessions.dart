@@ -14,7 +14,17 @@ class Activesessions extends StatefulWidget {
 }
 
 class _ActivesessionsState extends State<Activesessions> {
-  late Position _userPosition;
+  Position _userPosition = Position(
+    latitude: 0.0,
+    longitude: 0.0,
+    timestamp: DateTime.now(),
+    altitude: 0.0,
+    accuracy: 0.0,
+    heading: 0.0,
+    speed: 0.0,
+    speedAccuracy: 0.0, altitudeAccuracy: 0.0, headingAccuracy: 0.0
+  );
+
   late Future<List<Map<String, dynamic>>> _sessionsFuture;
   Set<String> _appliedSessions = Set<String>(); // To track applied sessions
 
@@ -51,6 +61,12 @@ class _ActivesessionsState extends State<Activesessions> {
 
       List<Map<String, dynamic>> allSessions = [];
 
+      // Fetch user donations
+      final userDoc = firestore.collection('users').doc(currentUser.uid);
+      final userSnap = await userDoc.get();
+      final userData = userSnap.data();
+      Map<String, dynamic> userDonations = userData != null && userData.containsKey('donations') ? userData['donations'] : {};
+
       // Step 2: Fetch sessions from each hospital
       for (var hospitalDoc in hospitalsSnapshot.docs) {
         final hospitalId = hospitalDoc.id;
@@ -60,34 +76,30 @@ class _ActivesessionsState extends State<Activesessions> {
             .collection('hospital')
             .doc(hospitalId)
             .collection('sessions')
+            .where('status', isEqualTo: 'on') // Filter sessions with status 'on'
             .get();
 
         // Map sessions data
         final List<Future<Map<String, dynamic>>> sessionFutures = sessionsSnapshot.docs.map((doc) async {
           final data = doc.data();
+
           final geoPoint = data['currentPosition'] as GeoPoint;
           final sessionName = data['name'];
-          bool isApplied = _appliedSessions.contains(sessionName);
+          final sessionKey = '${hospitalId}_${sessionName}';
+          bool isApplied = false;
           String operation = 'apply'; // Default to apply
 
           // Check if session is applied
-          final userDoc = firestore.collection('users').doc(currentUser.uid);
-          final userSnap = await userDoc.get();
-          final userData = userSnap.data();
-          if (userData != null && userData.containsKey('donations')) {
-            Map<String, dynamic> donations = userData['donations'];
-            if (donations.containsKey(sessionName) &&
-                donations[sessionName]['donationStatus'] == 'pending') {
-              isApplied = true;
-              operation = 'applied';
-            }
+          if (userDonations.containsKey(sessionKey) && userDonations[sessionKey]['donationStatus'] == 'pending') {
+            isApplied = true;
+            operation = 'applied';
           }
 
           return {
             'name': sessionName,
             'selectedAddress': data['selectedAddress'],
-            'startTime': data['startTime'].toDate(),
-            'date': data['date'].toDate(),
+            'startTime': (data['startTime'] as Timestamp).toDate(),
+            'date': (data['date'] as Timestamp).toDate(),
             'landmark': data['landmark'],
             'currentPosition': geoPoint,
             'hosId': hospitalId, // Ensure this field exists in the document
@@ -109,6 +121,8 @@ class _ActivesessionsState extends State<Activesessions> {
       return [];
     }
   }
+
+
 
 
   double _calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
@@ -174,21 +188,19 @@ class _ActivesessionsState extends State<Activesessions> {
             'name': userData['name'],
             'phone': userData['phone'],
             'userId': currentUser.uid,
+            'bloodGroup': userData['BloodGroup'],
           },
         },
       }, SetOptions(merge: true));
 
-
       // Save donation data in the 'users' collection
       await firestore.collection('users').doc(currentUser.uid).update({
-        'donations': {
-          session['name']: {
-            'hosId': session['hosId'],
-            'name': hospitalData['name'],
-            'email': hospitalData['email'],
-            'donationStatus': 'pending',
-            'operation': 'applied'
-          },
+        'donations.${session['hosId']}_${session['name']}': {
+          'hosId': session['hosId'],
+          'hospitalName': hospitalData['name'],
+          'hospitalEmail': hospitalData['email'],
+          'donationStatus': 'pending',
+          'operation': 'applied',
         },
       });
 
@@ -202,6 +214,7 @@ class _ActivesessionsState extends State<Activesessions> {
       print('Error saving donation data: $e');
     }
   }
+
 
   void _showDonationDialog(Map<String, dynamic> session) {
     showDialog(
@@ -499,8 +512,4 @@ class _ActivesessionsState extends State<Activesessions> {
       ),
     );
   }
-
-
 }
-
-

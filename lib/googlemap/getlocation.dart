@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class GetLocation extends StatefulWidget {
   const GetLocation({Key? key}) : super(key: key);
@@ -22,7 +23,22 @@ class _GetLocationState extends State<GetLocation> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    _requestPermissions();
+  }
+
+  Future<void> _requestPermissions() async {
+    var status = await Permission.location.request();
+    if (status.isGranted) {
+      _getCurrentLocation();
+    } else if (status.isDenied) {
+      // Handle the case when permissions are denied
+      print("Location permission denied");
+    } else if (status.isPermanentlyDenied) {
+      // Handle the case when permissions are permanently denied
+      print("Location permission permanently denied");
+      // You can direct the user to app settings to grant permissions
+      openAppSettings();
+    }
   }
 
   void _getCurrentLocation() async {
@@ -32,6 +48,12 @@ class _GetLocationState extends State<GetLocation> {
       );
 
       await _updateMarkerPosition(LatLng(position.latitude, position.longitude));
+      // Move camera to current location
+      if (mapController != null) {
+        mapController.animateCamera(
+          CameraUpdate.newLatLng(LatLng(position.latitude, position.longitude)),
+        );
+      }
     } catch (e) {
       print("Error getting location: $e");
     }
@@ -137,7 +159,6 @@ class _GetLocationState extends State<GetLocation> {
         }
         address +=
         '$thoroughfare $subThoroughfare, $locality, $administrativeArea $postalCode, $country';
-
       }
     } catch (e) {
       print("Error getting location details: $e");
@@ -158,6 +179,23 @@ class _GetLocationState extends State<GetLocation> {
     });
   }
 
+  void _goToCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+      mapController.animateCamera(
+        CameraUpdate.newLatLng(currentLatLng),
+      );
+
+      // Update marker position
+      await _updateMarkerPosition(currentLatLng);
+    } catch (e) {
+      print("Error getting current location: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,6 +206,10 @@ class _GetLocationState extends State<GetLocation> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: _saveLocation,
+          ),
+          IconButton(
+            icon: Icon(Icons.my_location),
+            onPressed: _goToCurrentLocation,
           ),
         ],
       ),
