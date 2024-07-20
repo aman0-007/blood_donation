@@ -21,6 +21,17 @@ class _RegisteScreenState extends State<RegisteScreen> {
   TextEditingController genderController = TextEditingController();
   //blood group
   //home location
+  final List<String> _bloodGroups = [
+    'A+',
+    'A-',
+    'B+',
+    'B-',
+    'AB+',
+    'AB-',
+    'O+',
+    'O-'
+  ];
+  String? _selectedBloodGroup;
 
 
   String? selectedGender;
@@ -235,11 +246,59 @@ class _RegisteScreenState extends State<RegisteScreen> {
                 ],
               ),
             ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 40),
+              child: Text(
+                "Blood Group",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+              child: Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: _selectedBloodGroup != null ? Colors.red.withOpacity(0.5) : Colors.grey,
+                    width: 1.5,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Select Blood Group',
+                    border: InputBorder.none,
+                  ),
+                  value: _selectedBloodGroup,
+                  items: _bloodGroups.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedBloodGroup = newValue;
+                    });
+                  },
+                  validator: (value) => value == null ? 'Please select a blood group' : null,
+                ),
+              ),
+            ),
+          ],
+        ),
             const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 40,top: 30),
+                  padding: EdgeInsets.only(left: 40,top: 10),
                   child: Text(
                     "Phone Number",
                     style: TextStyle(
@@ -363,10 +422,11 @@ class _RegisteScreenState extends State<RegisteScreen> {
                         String confirmPassword = _confirmPasswordController.text;
                         String dob = dobController.text.trim();
                         String gender = genderController.text.trim();
+
                         if (_validateEmail(email) &&
                             _validatePassword(password) && password == confirmPassword) {
                           try {
-                            _authentication.registerWithEmailAndPassword(context, name, email, password,dob,gender, phone);
+                            _authentication.registerWithEmailAndPassword(context, name, email, password,dob,gender, phone, _selectedBloodGroup);
                           } catch (e) {
                           }
                         } else {

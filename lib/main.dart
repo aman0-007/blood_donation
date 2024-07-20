@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -38,8 +38,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
@@ -47,14 +45,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> checkUserLoginStatus() async {
-    await Future.delayed(const Duration(seconds: 2)); // Simulating a delay
+    // Simulating a delay for demonstration purposes
+    await Future.delayed(const Duration(seconds: 2));
+
     final Authentication _auth = Authentication();
 
     // Check Firebase authentication state
     User? user = _auth.getCurrentUser();
     if (user != null) {
       // User is authenticated, check Firestore for donor status
-
       final docRef = FirebaseFirestore.instance.collection('donors').doc(user.uid);
       final docSnapshot = await docRef.get();
 
@@ -69,17 +68,13 @@ class _MyHomePageState extends State<MyHomePage> {
         // If the document does not exist, navigate to Hospitaldashboard
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Hospitaldashboard()), // Replace with your actual page
+          MaterialPageRoute(builder: (context) => const Hospitaldashboard()),
         );
       }
     } else {
       // User not authenticated, navigate to login page
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => AccountOptionPage()));
     }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
@@ -87,9 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: isLoading
-            ? CircularProgressIndicator() // Show loading indicator while checking user state
-            : Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Center(child: Image.asset('assets/blood_drop.png')),
