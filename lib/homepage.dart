@@ -5,6 +5,8 @@ import 'package:blood_donor/checkeligibility.dart';
 import 'package:blood_donor/donorhealthdetails.dart';
 import 'package:blood_donor/notification.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,6 +28,8 @@ class _HomePageState extends State<HomePage> {
     '"The measure of life is not its DURATION but its DONATION"',
     '"A bottle of blood saved my life.\nWas it yours?"',
   ];
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -158,30 +162,88 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Row(
-                          children: [
-                            const Text(
-                              "Check your eligibility to Donate",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              icon: const Icon(Icons.arrow_forward_ios_rounded),
-                              color: Colors.black,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const Checkeligibility()),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                      child: FutureBuilder<String>(
+                        future: getUserEligibilityStatus(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return const Center(child: Text('Error fetching data'));
+                          } else if (snapshot.hasData) {
+                            String status = snapshot.data!;
+                            if (status == 'eligible') {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      "You are eligible to donate blood",
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Icon(
+                                      Icons.check_circle_rounded, // Check icon
+                                      color: Colors.green, // Green color for the icon
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else if (status == 'notEligible') {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      "Not eligible to donate blood",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Icon(
+                                      Icons.cancel_rounded, // Cross icon
+                                      color: Colors.red, // Red color for the icon
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      "Check your eligibility to Donate",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    IconButton(
+                                      icon: const Icon(Icons.arrow_forward_ios_rounded),
+                                      color: Colors.black,
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => const Checkeligibility(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          } else {
+                            return const Center(child: Text('No data available'));
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -488,3 +550,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+Future<String> getUserEligibilityStatus() async {
+  final User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    return 'pending'; // Handle user not signed in
+  }
+
+  final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .get();
+
+  if (userDoc.exists) {
+    final eligibilityStatus = userDoc.get('eligibilityToDonate') as String;
+    return eligibilityStatus;
+  } else {
+    return 'pending'; // Default to pending if no document is found
+  }
+  }

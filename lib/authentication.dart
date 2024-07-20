@@ -65,6 +65,7 @@ class Authentication {
         'userId': userCredential.user?.uid,
         'lifeSaved': 0,
         'BloodGroup': bg,
+        'eligibilityToDonate': "pending",
       });
 
       await FirebaseFirestore.instance.collection('donors').doc(userCredential.user?.uid).set({});
