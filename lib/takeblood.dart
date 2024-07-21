@@ -1,4 +1,5 @@
 import 'package:blood_donor/donorhealthdetails.dart';
+import 'package:blood_donor/newuser1.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -189,7 +190,11 @@ class _TakebloodState extends State<Takeblood> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your onPressed code here if needed
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NewRegisteScreen()), // Adjust the route if needed
+          );
         },
         backgroundColor: Colors.redAccent,
         child: Icon(Icons.add, color: Colors.white),

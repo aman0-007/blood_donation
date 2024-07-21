@@ -20,6 +20,9 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
   bool? _hadCancer;
   bool? _hadVaccination;
   bool _isVerified = false;
+  String? _vesascAutonomous;
+  String? _bdcSource;
+  String? _reference;
 
   bool _areAllQuestionsAnswered() {
     return _hasDiabetes != null &&
@@ -29,6 +32,112 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
         _hadCancer != null &&
         _hadVaccination != null;
   }
+  Future<void> _showAdditionalDetailsDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          backgroundColor: Colors.white, // Set background color to white
+          title: Text(
+            'Additional Details',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.black87,
+            ),
+          ),
+          content: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTextField(
+                  label: 'Vesasc Autonomous',
+                  onChanged: (value) {
+                    setState(() {
+                      _vesascAutonomous = value;
+                    });
+                  },
+                ),
+                SizedBox(height: 16),
+                _buildTextField(
+                  label: 'BDC Source',
+                  onChanged: (value) {
+                    setState(() {
+                      _bdcSource = value;
+                    });
+                  },
+                ),
+                SizedBox(height: 16),
+                _buildTextField(
+                  label: 'Reference',
+                  onChanged: (value) {
+                    setState(() {
+                      _reference = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+
+
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent, // Background color for button
+                foregroundColor: Colors.white, // Text color for button
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
+              child: Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required ValueChanged<String> onChanged,
+  }) {
+    return TextField(
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.black54),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: Colors.black26),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue, width: 2.0),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      ),
+      onChanged: onChanged,
+    );
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -143,6 +252,8 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                         ),
                         onPressed: _isVerificationComplete()
                             ? () async {
+                          await _showAdditionalDetailsDialog();
+
                           var currentUser = FirebaseAuth.instance.currentUser;
                           if (currentUser == null) return;
 
@@ -168,8 +279,30 @@ class _DonorhealthdetailsState extends State<Donorhealthdetails> {
                               'hadCancer': _hadCancer,
                               'hadVaccination': _hadVaccination,
                             },
+                            'donors.${widget.userId}.additionalDetails': {
+                              'vesascAutonomous': _vesascAutonomous,
+                              'bdcSource': _bdcSource,
+                              'reference': _reference,
+                            },
                           });
 
+                          var userDoc = await firestore.collection('users').doc(widget.userId).get();
+                          var userData = userDoc.data();
+
+                          if (userData == null) return;
+
+                          await firestore
+                              .collection('Donation at VES')
+                              .doc(widget.userId)
+                              .set({
+                            'userId': widget.userId,
+                            'name': userData['name'],
+                            'phone': userData['phone'],
+                            'bloodGroup': userData['BloodGroup'],
+                            'vesascAutonomous': _vesascAutonomous,
+                            'bdcSource': _bdcSource,
+                            'reference': _reference,
+                          });
                           // Update donation status for user
                           await firestore
                               .collection('users')

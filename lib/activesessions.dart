@@ -90,10 +90,15 @@ class _ActivesessionsState extends State<Activesessions> {
           String operation = 'apply'; // Default to apply
 
           // Check if session is applied
-          if (userDonations.containsKey(sessionKey) && userDonations[sessionKey]['donationStatus'] == 'pending') {
+          if (userDonations.containsKey(sessionKey) && (userDonations[sessionKey]['donationStatus'] == 'pending' || userDonations[sessionKey]['donationStatus'] == 'donated'  )) {
             isApplied = true;
             operation = 'applied';
           }
+          //
+          // if (userDonations.containsKey(sessionKey) && userDonations[sessionKey]['donationStatus'] == 'donated' ) {
+          //   isApplied = true;
+          //   operation = 'applied';
+          // }
 
           return {
             'name': sessionName,
@@ -122,9 +127,6 @@ class _ActivesessionsState extends State<Activesessions> {
     }
   }
 
-
-
-
   double _calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
     const int earthRadius = 6371; // Radius of the earth in km
     double latDistance = _toRadians(endLatitude - startLatitude);
@@ -141,14 +143,23 @@ class _ActivesessionsState extends State<Activesessions> {
     return degree * (pi / 180);
   }
 
-  String _getSessionStatus(DateTime startTime) {
+  String _getSessionStatus(DateTime startTime, DateTime date) {
     final now = DateTime.now();
-    if (now.isAfter(startTime)) {
+
+    // Check if the current date is the same as or after the session date
+    bool isSameOrAfterDate = now.isAfter(DateTime(date.year, date.month, date.day)) ||
+        (now.year == date.year && now.month == date.month && now.day == date.day);
+
+    // Check if the current time is after the session start time
+    bool isAfterStartTime = now.isAfter(startTime);
+
+    if (isSameOrAfterDate && isAfterStartTime) {
       return 'Live';
     } else {
       return 'Inactive';
     }
   }
+
 
   Future<void> _saveDonationData(Map<String, dynamic> session) async {
     try {
@@ -215,17 +226,35 @@ class _ActivesessionsState extends State<Activesessions> {
     }
   }
 
-
   void _showDonationDialog(Map<String, dynamic> session) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Donate at this Camp'),
-        content: Text('Do you want to donate at this camp?'),
+        backgroundColor: Colors.white, // Set the dialog body color to white
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15), // Rounded corners
+        ),
+        title: Text(
+          'Donate at this Camp',
+          style: TextStyle(
+            color: Colors.black, // Title color
+          ),
+        ),
+        content: Text(
+          'Do you want to donate at this camp?',
+          style: TextStyle(
+            color: Colors.black, // Content color
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('No'),
+            child: Text(
+              'No',
+              style: TextStyle(
+                color: Colors.red, // No button text color
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -234,6 +263,9 @@ class _ActivesessionsState extends State<Activesessions> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red, // Red color button
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // Rounded button corners
+              ),
             ),
             child: Text('Yes'),
           ),
@@ -241,6 +273,7 @@ class _ActivesessionsState extends State<Activesessions> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -297,7 +330,6 @@ class _ActivesessionsState extends State<Activesessions> {
     );
   }
 
-
   Widget _buildSessionCard(Map<String, dynamic> session) {
     final sessionPosition = session['currentPosition'] as GeoPoint;
     final distance = _userPosition != null
@@ -308,7 +340,7 @@ class _ActivesessionsState extends State<Activesessions> {
       sessionPosition.longitude,
     )
         : 0;
-    final status = _getSessionStatus(session['startTime']);
+    final status = _getSessionStatus(session['startTime'],session['date']);
     final isApplied = session['isApplied'];
     final operation = session['operation'];
 
@@ -512,4 +544,5 @@ class _ActivesessionsState extends State<Activesessions> {
       ),
     );
   }
+
 }
