@@ -277,17 +277,6 @@ class _ActivesessionsState extends State<Activesessions> {
 
   @override
   Widget build(BuildContext context) {
-    if (_userPosition == null) {
-      // If _userPosition is null, display a loading indicator or handle the absence of position data
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Loading...'),
-        ),
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.redAccent,

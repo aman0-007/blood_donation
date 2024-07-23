@@ -1,6 +1,5 @@
 import 'package:blood_donor/hospitallogin.dart';
 import 'package:blood_donor/loginscreen.dart';
-import 'package:blood_donor/main.dart';
 import 'package:blood_donor/register.dart';
 import 'package:flutter/material.dart';
 

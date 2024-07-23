@@ -3,7 +3,6 @@ import 'package:blood_donor/authentication.dart';
 import 'package:blood_donor/bloodbanks.dart';
 import 'package:blood_donor/bloodinfo.dart';
 import 'package:blood_donor/checkeligibility.dart';
-import 'package:blood_donor/donorhealthdetails.dart';
 import 'package:blood_donor/nearbydonors.dart';
 import 'package:blood_donor/notification.dart';
 import 'package:carousel_slider/carousel_slider.dart';

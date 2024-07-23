@@ -154,32 +154,40 @@ class _TakebloodState extends State<Takeblood> {
                       String dob = donorDetails[index]['dob'] ?? 'No DOB';
                       String eligibility = _calculateEligibility(dob);
                       String userId = donorDetails[index]['id'];
-                      String bloodGroup = donorDetails[index]['bloodGroup'] ?? 'No Blood Group'; // Add blood group
+                      String bloodGroup = donorDetails[index]['bloodGroup'] ?? 'No Blood Group';
                       String status = donorDetails[index]['status'];
 
-                      if (status == "pending") {
-                        return Card(
-                          margin: EdgeInsets.symmetric(vertical: 8.0),
-                          elevation: 4,
+                      // Determine if the donor is eligible
+                      bool isEligible = eligibility == 'Eligible';
+
+                      return Card(
+                        margin: EdgeInsets.symmetric(vertical: 8.0),
+                        elevation: 4,
+                        child: isEligible
+                            ? ListTile(
+                          contentPadding: EdgeInsets.all(16.0),
+                          title: Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text('DOB: $dob\nEligibility: $eligibility\nBlood Group: $bloodGroup'),
+                          tileColor: Colors.white,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Donorhealthdetails(userId: userId, sessionName: widget.sessionName),
+                              ),
+                            );
+                          },
+                        )
+                            : Container(
+                          color: Colors.grey[300], // Greyish color
                           child: ListTile(
                             contentPadding: EdgeInsets.all(16.0),
-                            title: Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+                            title: Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
                             subtitle: Text('DOB: $dob\nEligibility: $eligibility\nBlood Group: $bloodGroup'),
-                            tileColor: Colors.white, // White background for ListTile
-                            onTap: () {
-                              // Navigate to DonorHealthDetails page
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Donorhealthdetails(userId: userId,sessionName: widget.sessionName,),
-                                ),
-                              );
-                            },
+                            onTap: null, // Disable onTap for non-eligible donors
                           ),
-                        );
-                      } else {
-                        return SizedBox.shrink(); // Return an empty widget if status is not 'pending'
-                      }
+                        ),
+                      );
                     },
                   );
                 },

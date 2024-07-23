@@ -49,12 +49,10 @@ class _GetLocationState extends State<GetLocation> {
 
       await _updateMarkerPosition(LatLng(position.latitude, position.longitude));
       // Move camera to current location
-      if (mapController != null) {
-        mapController.animateCamera(
-          CameraUpdate.newLatLng(LatLng(position.latitude, position.longitude)),
-        );
-      }
-    } catch (e) {
+      mapController.animateCamera(
+        CameraUpdate.newLatLng(LatLng(position.latitude, position.longitude)),
+      );
+        } catch (e) {
       print("Error getting location: $e");
     }
   }
