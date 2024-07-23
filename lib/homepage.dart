@@ -4,6 +4,7 @@ import 'package:blood_donor/bloodbanks.dart';
 import 'package:blood_donor/bloodinfo.dart';
 import 'package:blood_donor/checkeligibility.dart';
 import 'package:blood_donor/donorhealthdetails.dart';
+import 'package:blood_donor/nearbydonors.dart';
 import 'package:blood_donor/notification.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -158,119 +159,119 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 25),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 5),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(40),
-                      color: Colors.yellowAccent,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 3,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: FutureBuilder<String>(
-                      future: _eligibilityStatusFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return const Center(child: Text('Error fetching data'));
-                        } else if (snapshot.hasData) {
-                          String status = snapshot.data!;
-                          if (status == 'eligible') {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-                                    child: const Text(
-                                      "You are eligible to donate blood",
-                                      style: TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  const Icon(
-                                    Icons.check_circle_rounded,
-                                    color: Colors.green,
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else if (status == 'notEligible') {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-                                    child: const Text(
-                                      "Not eligible to donate blood",
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  const Icon(
-                                    Icons.cancel_rounded,
-                                    color: Colors.red,
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
-                              child: Row(
-                                children: [
-                                  const Text(
-                                    "Check your eligibility to Donate",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  IconButton(
-                                    icon: const Icon(Icons.arrow_forward_ios_rounded),
-                                    color: Colors.black,
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => const Checkeligibility(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 5),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(40),
+                        color: Colors.yellowAccent,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 3,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: FutureBuilder<String>(
+                        future: _eligibilityStatusFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return const Center(child: Text('Error fetching data'));
+                          } else if (snapshot.hasData) {
+                            String status = snapshot.data!;
+                            if (status == 'eligible') {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+                                      child: const Text(
+                                        "You are eligible to donate blood",
+                                        style: TextStyle(
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.w700,
                                         ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Icon(
+                                      Icons.check_circle_rounded,
+                                      color: Colors.green,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else if (status == 'notEligible') {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+                                      child: const Text(
+                                        "Not eligible to donate blood",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Icon(
+                                      Icons.cancel_rounded,
+                                      color: Colors.red,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      "Check your eligibility to Donate",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    IconButton(
+                                      icon: const Icon(Icons.arrow_forward_ios_rounded),
+                                      color: Colors.black,
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => const Checkeligibility(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          } else {
+                            return const Center(child: Text('No data available'));
                           }
-                        } else {
-                          return const Center(child: Text('No data available'));
-                        }
-                      },
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
             const SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -288,32 +289,42 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 45, bottom: 45, left: 20, right: 40),
-                            child: Image.asset(
-                              "assets/blooddonationlocation.png",
-                              width: 70,
-                              height: 70,
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Nearbydonors(),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 45, bottom: 45, left: 20, right: 40),
+                              child: Image.asset(
+                                "assets/blooddonationlocation.png",
+                                width: 70,
+                                height: 70,
+                              ),
                             ),
                           ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(right: 10.0),
-                          child: Text(
-                            "Nearby donors",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w900,
+                          const Padding(
+                            padding: EdgeInsets.only(right: 10.0),
+                            child: Text(
+                              "Nearby donors",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

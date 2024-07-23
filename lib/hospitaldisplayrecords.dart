@@ -13,7 +13,7 @@ class Displayrecords extends StatefulWidget {
 class _DisplayrecordsState extends State<Displayrecords> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  late Future<Map<String, dynamic>> _sessionFuture;
+  late Future<List<Map<String, dynamic>>> _sessionFuture;
   String searchQuery = '';
 
   @override
@@ -22,7 +22,7 @@ class _DisplayrecordsState extends State<Displayrecords> {
     _sessionFuture = _fetchSessionData();
   }
 
-  Future<Map<String, dynamic>> _fetchSessionData() async {
+  Future<List<Map<String, dynamic>>> _fetchSessionData() async {
     try {
       final currentUser = _auth.currentUser;
       if (currentUser == null) {
@@ -47,10 +47,17 @@ class _DisplayrecordsState extends State<Displayrecords> {
         throw Exception('No donor data found');
       }
 
-      return sessionData;
+      final donors = sessionData['donors'] as Map<String, dynamic>;
+
+      // Filter donors based on 'status' == 'accepted'
+      final filteredDonors = donors.values.where((donor) {
+        return donor['status'] == 'accepted'; // Adjust status condition here
+      }).toList();
+
+      return filteredDonors.cast<Map<String, dynamic>>(); // Ensure proper casting
     } catch (e) {
       print('Error fetching session data: $e');
-      return {};
+      return [];
     }
   }
 
@@ -66,23 +73,21 @@ class _DisplayrecordsState extends State<Displayrecords> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 16.0,right: 20),
-              child: FutureBuilder<Map<String, dynamic>>(
+              padding: const EdgeInsets.only(left: 16.0, right: 20),
+              child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: _sessionFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  } else if (snapshot.data == null || snapshot.data!.isEmpty) {
                     return Text('Total Donors: 0', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold));
                   } else {
-                    final sessionData = snapshot.data!;
-                    final donors = sessionData['donors'] as Map<String, dynamic>;
-                    final totalDonors = donors.length;
+                    final filteredDonors = snapshot.data!;
 
                     return Text(
-                      'Total Donors: $totalDonors',
+                      'Total Donors: ${filteredDonors.length}',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     );
                   }
@@ -90,7 +95,7 @@ class _DisplayrecordsState extends State<Displayrecords> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16,bottom: 16.0,right: 20),
+              padding: const EdgeInsets.only(left: 16, bottom: 16.0, right: 20),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -113,29 +118,28 @@ class _DisplayrecordsState extends State<Displayrecords> {
               ),
             ),
             Expanded(
-              child: FutureBuilder<Map<String, dynamic>>(
+              child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: _sessionFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  } else if (snapshot.data == null || snapshot.data!.isEmpty) {
                     return Center(child: Text('No donor records found.'));
                   } else {
-                    final sessionData = snapshot.data!;
-                    final donors = sessionData['donors'] as Map<String, dynamic>;
+                    final filteredDonors = snapshot.data!;
 
-                    final filteredDonors = donors.values.where((donor) {
+                    final displayedDonors = filteredDonors.where((donor) {
                       final name = (donor['name'] as String?)?.toLowerCase() ?? '';
                       final email = (donor['email'] as String?)?.toLowerCase() ?? '';
                       return name.contains(searchQuery) || email.contains(searchQuery);
                     }).toList();
 
                     return ListView.builder(
-                      itemCount: filteredDonors.length,
+                      itemCount: displayedDonors.length,
                       itemBuilder: (context, index) {
-                        final donor = filteredDonors[index] as Map<String, dynamic>;
+                        final donor = displayedDonors[index];
 
                         return Card(
                           margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -154,7 +158,6 @@ class _DisplayrecordsState extends State<Displayrecords> {
                                 Text('Blood Group: ${donor['bloodGroup'] ?? 'Not provided'}'),
                                 Text('DOB: ${donor['dob'] ?? 'Not provided'}'),
                                 Text('Gender: ${donor['gender'] ?? 'Not provided'}'),
-                                Text('Status: ${sessionData['status'] ?? 'Not provided'}'),
                               ],
                             ),
                           ),
