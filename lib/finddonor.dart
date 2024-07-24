@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Finddonor extends StatefulWidget {
-  const Finddonor({super.key});
+  const Finddonor({Key? key}) : super(key: key);
 
   @override
   State<Finddonor> createState() => _FinddonorState();
@@ -10,13 +11,36 @@ class Finddonor extends StatefulWidget {
 class _FinddonorState extends State<Finddonor> {
   final List<String> bloodGroups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
   final String placeholderValue = 'Select';
-
-  String? selectedBloodGroup;  // Use class-level variable to maintain state
+  String? selectedBloodGroup;
+  List<Map<String, dynamic>> donors = []; // List to hold donor details
 
   @override
   void initState() {
     super.initState();
-    selectedBloodGroup = placeholderValue;  // Initialize with placeholder value
+    selectedBloodGroup = placeholderValue;
+  }
+
+  Future<void> fetchDonors() async {
+    try {
+      // Replace 'users' with your Firestore collection name
+      var querySnapshot = await FirebaseFirestore.instance.collection('users')
+          .where('BloodGroup', isEqualTo: selectedBloodGroup)
+          .get();
+
+      List<Map<String, dynamic>> tempDonors = [];
+      querySnapshot.docs.forEach((doc) {
+        String name = doc['name'];
+        String phone = doc['phone'];
+        // Create a map to hold donor details
+        tempDonors.add({'name': name, 'phone': phone});
+      });
+
+      setState(() {
+        donors = tempDonors; // Update state with fetched donors
+      });
+    } catch (e) {
+      print('Error fetching donors: $e');
+    }
   }
 
   @override
@@ -118,39 +142,10 @@ class _FinddonorState extends State<Finddonor> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 22.0, top: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Location",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 22.0, right: 22.0, top: 7),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Enter your location',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                      ),
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 22.0, right: 22.0, top: 40, bottom: 40),
+                    padding: const EdgeInsets.only(left: 22.0, right: 22.0, top: 20, bottom: 15),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: fetchDonors,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 17, horizontal: 20),
@@ -184,9 +179,52 @@ class _FinddonorState extends State<Finddonor> {
                 ],
               ),
             ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: donors.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    child: Card(
+                      color: Colors.white,
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        title: Text(
+                          donors[index]['name'],
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16, // Adjust font size if needed
+                            color: Colors.black, // Text color
+                          ),
+                        ),
+                        subtitle: Text(
+                          donors[index]['phone'],
+                          style: TextStyle(
+                            fontSize: 14, // Adjust font size if needed
+                            color: Colors.grey[600], // Subtitle text color
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.grey[600], // Trailing icon color
+                        ),
+                        onTap: () {
+                          // Handle onTap if needed
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
+
