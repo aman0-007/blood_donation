@@ -12,7 +12,7 @@ class _FinddonorState extends State<Finddonor> {
   final List<String> bloodGroups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
   final String placeholderValue = 'Select';
   String? selectedBloodGroup;
-  List<Map<String, dynamic>> donors = []; // List to hold donor details
+  List<Map<String, dynamic>> donors = [];
 
   @override
   void initState() {
