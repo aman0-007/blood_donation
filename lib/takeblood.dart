@@ -16,17 +16,18 @@ class Takeblood extends StatefulWidget {
 class _TakebloodState extends State<Takeblood> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _searchController = TextEditingController();
 
-  Future<List<Map<String, dynamic>>> _fetchDonorDetails() async {
-    User? currentUser = _auth.currentUser; // Ensure you have the current user
+  Future<List<Map<String, dynamic>>> _fetchDonorDetails({String? searchQuery}) async {
+    User? currentUser = _auth.currentUser;
     List<Map<String, dynamic>> donorDetails = [];
 
     // Fetch the session document
     var sessionDoc = await _firestore
         .collection('hospital')
-        .doc(currentUser?.uid) // Using the current user's ID
+        .doc(currentUser?.uid)
         .collection('sessions')
-        .doc(widget.sessionName) // Using the session name passed from previous page
+        .doc(widget.sessionName)
         .get();
 
     // Access the donors map within the session document
@@ -38,11 +39,21 @@ class _TakebloodState extends State<Takeblood> {
       donors.forEach((donorId, donorData) {
         if (donorData['status'] == 'pending') {
           donorDetails.add({
-            'id': donorId, // Store the donor ID for navigation
+            'id': donorId,
             ...donorData as Map<String, dynamic>
           });
         }
       });
+
+      // Apply search filter if query is provided
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        donorDetails.retainWhere((donor) {
+          String name = donor['name'].toString().toLowerCase();
+          String bloodGroup = donor['bloodGroup'].toString().toLowerCase();
+          return name.contains(searchQuery.toLowerCase()) ||
+              bloodGroup.contains(searchQuery.toLowerCase());
+        });
+      }
     }
     return donorDetails;
   }
@@ -63,9 +74,9 @@ class _TakebloodState extends State<Takeblood> {
     // Update the session status to 'closed'
     await _firestore
         .collection('hospital')
-        .doc(currentUser?.uid) // Using the current user's ID
+        .doc(currentUser?.uid)
         .collection('sessions')
-        .doc(widget.sessionName) // Using the session name passed from previous page
+        .doc(widget.sessionName)
         .update({'status': 'closed'});
 
     // Navigate back to the previous page or show a success message
@@ -104,11 +115,10 @@ class _TakebloodState extends State<Takeblood> {
         ],
       ),
       body: Container(
-        color: Colors.white, // Set background color to white
+        color: Colors.white,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Search bar
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Row(
@@ -120,6 +130,10 @@ class _TakebloodState extends State<Takeblood> {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: TextField(
+                        controller: _searchController,
+                        onChanged: (value) {
+                          setState(() {}); // Trigger rebuild on text change
+                        },
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.search, color: Colors.grey.withOpacity(0.7)),
                           hintText: 'Search',
@@ -133,10 +147,9 @@ class _TakebloodState extends State<Takeblood> {
                 ],
               ),
             ),
-            // Donor List
             Expanded(
               child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _fetchDonorDetails(),
+                future: _fetchDonorDetails(searchQuery: _searchController.text),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -157,7 +170,6 @@ class _TakebloodState extends State<Takeblood> {
                       String bloodGroup = donorDetails[index]['bloodGroup'] ?? 'No Blood Group';
                       String status = donorDetails[index]['status'];
 
-                      // Determine if the donor is eligible
                       bool isEligible = eligibility == 'Eligible';
 
                       return Card(
@@ -179,12 +191,12 @@ class _TakebloodState extends State<Takeblood> {
                           },
                         )
                             : Container(
-                          color: Colors.grey[300], // Greyish color
+                          color: Colors.grey[300],
                           child: ListTile(
                             contentPadding: EdgeInsets.all(16.0),
                             title: Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
                             subtitle: Text('DOB: $dob\nEligibility: $eligibility\nBlood Group: $bloodGroup'),
-                            onTap: null, // Disable onTap for non-eligible donors
+                            onTap: null,
                           ),
                         ),
                       );
@@ -198,10 +210,9 @@ class _TakebloodState extends State<Takeblood> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => NewRegisteScreen()), // Adjust the route if needed
+            MaterialPageRoute(builder: (context) => NewRegisteScreen()),
           );
         },
         backgroundColor: Colors.redAccent,
