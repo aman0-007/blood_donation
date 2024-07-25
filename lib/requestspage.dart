@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:blood_donor/homepage.dart';
-import 'package:blood_donor/bottomnavigationpage.dart';
+import 'homepage.dart';
+import 'bottomnavigationpage.dart';
 
 class Requestspage extends StatefulWidget {
   const Requestspage({Key? key}) : super(key: key);
@@ -12,6 +12,15 @@ class Requestspage extends StatefulWidget {
 class _RequestspageState extends State<Requestspage> {
   String selectedBloodGroup = '';
   int numberOfUnits = 1;
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _genderController = TextEditingController();
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    _genderController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +53,6 @@ class _RequestspageState extends State<Requestspage> {
                     fontSize: 20,
                   ),
                 ),
-
               ],
             ),
           ),
@@ -71,8 +79,16 @@ class _RequestspageState extends State<Requestspage> {
                     buildSelectedUnitsDisplay(),
                     SizedBox(height: 20),
                     buildInputLabel("Enter Mobile Number"),
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
                     buildMobileFieldWithIcon("Mobile Number", Icons.phone),
+                    SizedBox(height: 20),
+                    buildInputLabel("Select Date"),
+                    SizedBox(height: 10),
+                    buildDateField(),
+                    SizedBox(height: 20),
+                    buildInputLabel("Select Gender"),
+                    SizedBox(height: 10),
+                    buildGenderDropdown(),
                     SizedBox(height: 20),
 
                     ElevatedButton(
@@ -113,42 +129,6 @@ class _RequestspageState extends State<Requestspage> {
         fontSize: 17,
         fontWeight: FontWeight.bold,
       ),
-    );
-  }
-
-  Widget buildInputField(String label, TextInputType inputType) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 6),
-        TextField(
-          keyboardType: inputType,
-          style: TextStyle(
-            color: Colors.grey.shade600,
-          ),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
-        ),
-      ],
     );
   }
 
@@ -297,6 +277,75 @@ class _RequestspageState extends State<Requestspage> {
             ),
             border: InputBorder.none,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildDateField() {
+    return GestureDetector(
+      onTap: () {
+        showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+        ).then((selectedDate) {
+          if (selectedDate != null) {
+            _dateController.text = "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+          }
+        });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: TextField(
+            controller: _dateController,
+            keyboardType: TextInputType.datetime,
+            decoration: InputDecoration(
+              hintText: 'DD/MM/YYYY',
+              hintStyle: TextStyle(color: Colors.grey.shade700),
+              icon: Icon(Icons.calendar_today, color: Colors.black),
+              border: InputBorder.none,
+            ),
+            readOnly: true,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildGenderDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            hintText: 'Gender',
+            hintStyle: TextStyle(color: Colors.grey.shade700),
+            icon: Icon(Icons.person, color: Colors.black),
+            border: InputBorder.none,
+          ),
+          value: _genderController.text,
+          items: ['Male', 'Female', 'Other'].map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (String? value) {
+            setState(() {
+              _genderController.text = value!;
+            });
+          },
         ),
       ),
     );
