@@ -1,3 +1,4 @@
+import 'package:blood_donor/blinkingdot.dart';
 import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -127,136 +128,108 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
   }
 }
 
-
 class ReceivedRequestsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
+  // Method to fetch all notifications from all user documents
+  Stream<List<Map<String, dynamic>>> getAllNotificationsStream() async* {
+    // Fetch all user documents in the `notifications` collection
+    final userDocsSnapshot = await FirebaseFirestore.instance.collection('notifications').get();
 
-    if (userId == null) {
-      return Scaffold(
-        body: Center(
-          child: Text("User not logged in."),
-        ),
-      );
+    List<Map<String, dynamic>> allNotifications = [];
+
+    for (var userDoc in userDocsSnapshot.docs) {
+      // Fetch notifications from each user's sub-collection
+      final notificationsSnapshot = await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(userDoc.id)
+          .collection('notifications')
+          .get();
+
+      final notifications = notificationsSnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+      allNotifications.addAll(notifications);
     }
 
+    yield allNotifications;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('notifications')
-            .snapshots(),
+      appBar: AppBar(
+        title: Text("Notifications"),
+      ),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: getAllNotificationsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Text("No requests found."),
-            );
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text("No requests found."));
           }
 
-          // List of documents from the main collection
-          final documents = snapshot.data!.docs;
-
-          // Filter out documents where the document ID matches the current user's ID
-          final filteredDocuments = documents.where((doc) => doc.id != userId).toList();
-
-          // If no documents match the filter
-          if (filteredDocuments.isEmpty) {
-            return Center(
-              child: Text("No requests found."),
-            );
-          }
+          final notifications = snapshot.data!;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: ListView.builder(
-              itemCount: filteredDocuments.length,
+              itemCount: notifications.length,
               itemBuilder: (context, index) {
-                // Fetch subcollection documents for each filtered document
-                return FutureBuilder<QuerySnapshot>(
-                  future: FirebaseFirestore.instance
-                      .collection('notifications')
-                      .doc(filteredDocuments[index].id)
-                      .collection('notifications')
-                      .get(),
-                  builder: (context, subSnapshot) {
-                    if (subSnapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (!subSnapshot.hasData || subSnapshot.data!.docs.isEmpty) {
-                      return Center(
-                        child: Text("No subcollection requests found."),
-                      );
-                    }
+                var data = notifications[index];
 
-                    // List of documents from the subcollection
-                    final subDocuments = subSnapshot.data!.docs;
-
-                    return Column(
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: subDocuments.map((subDoc) {
-                        var data = subDoc.data() as Map<String, dynamic>;
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.circular(10),
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.redAccent.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                "${data['selectedBloodGroup'] ?? 'N/A'}",
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
+                            SizedBox(width: 16),
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.redAccent.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Text(
-                                        "${data['selectedBloodGroup'] ?? 'N/A'}",
-                                        style: TextStyle(
-                                          color: Colors.redAccent,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 16),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Gender: ${data['gender'] ?? 'N/A'}",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          "Patient Name: ${data['patientName'] ?? 'N/A'}",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 16),
                                 Text(
-                                  "Number of Units: ${data['numberOfUnits'] ?? 'N/A'}",
+                                  "Gender: ${data['gender'] ?? 'N/A'}",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  "Patient Name: ${data['patientName'] ?? 'N/A'}",
                                   style: TextStyle(fontSize: 18),
                                 ),
                               ],
                             ),
-                          ),
-                        );
-                      }).toList(),
-                    );
-                  },
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          "Number of Units: ${data['numberOfUnits'] ?? 'N/A'}",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
@@ -310,6 +283,18 @@ class MyRequestsPage extends StatelessWidget {
               itemCount: documents.length,
               itemBuilder: (context, index) {
                 var data = documents[index].data() as Map<String, dynamic>;
+                var accepted = data['accepted'] ?? 'No'; // Get request status
+
+                // Determine the status text and icon
+                String statusText;
+                Widget statusIcon;
+                if (accepted == 'No') {
+                  statusText = 'Request Pending';
+                  statusIcon = Icon(Icons.cancel, color: Colors.grey);
+                } else {
+                  statusText = 'Request Accepted';
+                  statusIcon = Icon(Icons.person, color: Colors.grey);
+                }
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -361,6 +346,46 @@ class MyRequestsPage extends StatelessWidget {
                         Text(
                           "Number of Units: ${data['numberOfUnits'] ?? 'N/A'}",
                           style: TextStyle(fontSize: 18),
+                        ),
+                        SizedBox(height: 16),
+                        Divider(),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            if (accepted == 'No')
+                              BlinkingDot(size: 10.0)
+                            else
+                              Container(
+                                width: 10.0,
+                                height: 10.0,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            SizedBox(width: 6.0),
+
+                            if (accepted == 'No')
+                              BlinkingText(
+                                text: statusText,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.red,
+                                ),
+                              )
+                            else
+                              Text(
+                                statusText,
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            SizedBox(width: 16),
+                            statusIcon,
+                          ],
                         ),
                       ],
                     ),
