@@ -1,6 +1,8 @@
+import 'package:blood_donor/googlemap/getlocation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'homepage.dart';
-import 'bottomnavigationpage.dart';
+import 'package:geolocator/geolocator.dart';
 
 class Requestspage extends StatefulWidget {
   const Requestspage({Key? key}) : super(key: key);
@@ -14,13 +16,79 @@ class _RequestspageState extends State<Requestspage> {
   int numberOfUnits = 1;
   TextEditingController _dateController = TextEditingController();
   TextEditingController _genderController = TextEditingController();
+  TextEditingController _address1Controller = TextEditingController();
+  TextEditingController _patientNameController = TextEditingController();
+  TextEditingController _mobileController = TextEditingController();
+
+  Position? _currentPosition;
+  String _selectedAddress = '';
 
   @override
   void dispose() {
     _dateController.dispose();
     _genderController.dispose();
+    _patientNameController.dispose();
+    _mobileController.dispose();
+    _address1Controller.dispose();
     super.dispose();
   }
+
+  void _saveDataToFirestore() async {
+    // Get the current user ID
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+    // Check if userId is null (though in your logic, you should ensure user is logged in before accessing this page)
+    if (userId == null) {
+      print('User is not authenticated.');
+      return;
+    }
+
+    // Create a map with all the data to be saved
+    Map<String, dynamic> data = {
+      'date': _dateController.text,
+      'gender': _genderController.text,
+      'address': _address1Controller.text,
+      'patientName': _patientNameController.text,
+      'mobile': _mobileController.text,
+      'currentPosition': _currentPosition != null ? {
+        'latitude': _currentPosition!.latitude,
+        'longitude': _currentPosition!.longitude,
+      } : null,
+      'selectedBloodGroup': selectedBloodGroup,
+      'numberOfUnits': numberOfUnits,
+      'userId': userId,
+      'solved':'No',
+      'accepted':'No'
+    };
+
+    try {
+
+      // Save data to Firestore in the specified structure
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(userId)
+          .collection('notifications')
+          .add(data);
+
+      // Clear all the controller values
+      _dateController.clear();
+      _genderController.clear();
+      _address1Controller.clear();
+      _patientNameController.clear();
+      _mobileController.clear();
+
+      // Clear other variables if necessary
+      _currentPosition = null;
+
+
+      // Optionally, navigate to Home Page after successful submission
+      // Navigator.of(context).push(MaterialPageRoute(builder: (_) => HomePage()));
+    } catch (e) {
+      print('Error saving data: $e');
+      // Handle error saving data
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +134,7 @@ class _RequestspageState extends State<Requestspage> {
                     SizedBox(height: 20),
                     buildInputLabel("Select Patient Name"),
                     SizedBox(height: 6),
-                    buildInputFieldWithIcon("Patient Name", Icons.person),
+                    buildInputFieldWithIcon("Patient Name", Icons.person, _patientNameController),
                     SizedBox(height: 20),
                     buildInputLabel("Select Blood Group"),
                     SizedBox(height: 10),
@@ -75,25 +143,96 @@ class _RequestspageState extends State<Requestspage> {
                     buildInputLabel("Number of Units"),
                     SizedBox(height: 10),
                     buildUnitSlider(),
-                    SizedBox(height: 10),
                     buildSelectedUnitsDisplay(),
+                    SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GetLocation(),
+                            ),
+                          );
+                          if (result != null) {
+                            setState(() {
+                              _currentPosition = Position(
+                                latitude: result['position'].latitude,
+                                longitude: result['position'].longitude,
+                                accuracy: 0.0, // provide an appropriate accuracy value
+                                altitude: 0.0,
+                                heading: 0.0,
+                                speed: 0.0,
+                                speedAccuracy: 0.0,
+                                timestamp: DateTime.now(),
+                                altitudeAccuracy: 0.0,
+                                headingAccuracy: 0.0,
+                              );
+                              _selectedAddress = result['selectedAddress'];
+                              _address1Controller.text = result['selectedAddress'];
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.location_on),
+                        label: const Text('Select Location'),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(Colors.redAccent),
+                          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                          ),
+                          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                            const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                          ),
+                          minimumSize: MaterialStateProperty.all<Size>(
+                            const Size(double.infinity, 0),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    buildInputLabel("Enter Address"),
+                    SizedBox(height: 6),
+                    buildInputFieldWithIcon("Address", Icons.location_on, _address1Controller),
                     SizedBox(height: 20),
                     buildInputLabel("Enter Mobile Number"),
                     SizedBox(height: 10),
-                    buildMobileFieldWithIcon("Mobile Number", Icons.phone),
+                    buildMobileFieldWithIcon("Mobile Number", Icons.phone, _mobileController),
                     SizedBox(height: 20),
-                    buildInputLabel("Select Date"),
-                    SizedBox(height: 10),
-                    buildDateField(),
-                    SizedBox(height: 20),
-                    buildInputLabel("Select Gender"),
-                    SizedBox(height: 10),
-                    buildGenderDropdown(),
-                    SizedBox(height: 20),
-
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              buildInputLabel("Gender"),
+                              SizedBox(height: 10),
+                              buildGenderDropdown(),
+                              SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              buildInputLabel("Date"),
+                              SizedBox(height: 10),
+                              buildDateField(),
+                              SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (_) => HomePage()));
+                        _saveDataToFirestore();
                       },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 15),
@@ -132,15 +271,16 @@ class _RequestspageState extends State<Requestspage> {
     );
   }
 
-  Widget buildInputFieldWithIcon(String hintText, IconData icon) {
+  Widget buildInputFieldWithIcon(String hintText, IconData icon, TextEditingController controller) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.1), // Grey with less opacity
+        color: Colors.grey.withOpacity(0.1),
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: TextField(
+          controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(
@@ -220,24 +360,13 @@ class _RequestspageState extends State<Requestspage> {
       max: 7,
       divisions: 6,
       activeColor: Colors.redAccent,
-      inactiveColor: Colors.grey.withOpacity(0.3), // Adjust opacity for a softer look
+      inactiveColor: Colors.grey.withOpacity(0.3),
       onChanged: (double value) {
         setState(() {
           numberOfUnits = value.round();
         });
       },
-      onChangeStart: (double value) {
-        // Optional: Add any actions when slider interaction starts
-      },
-      onChangeEnd: (double value) {
-        // Optional: Add any actions when slider interaction ends
-      },
-      label: '$numberOfUnits unit${numberOfUnits != 1 ? 's' : ''}', // Display current value label
-      // Optional: Customize slider appearance
-      // thumbColor: Colors.redAccent,
-      // overlayColor: Colors.red.withAlpha(32),
-      // activeTrackHeight: 8.0,
-      // inactiveTrackHeight: 4.0,
+      label: '$numberOfUnits unit${numberOfUnits != 1 ? 's' : ''}',
     );
   }
 
@@ -256,7 +385,7 @@ class _RequestspageState extends State<Requestspage> {
     );
   }
 
-  Widget buildMobileFieldWithIcon(String hintText, IconData icon) {
+  Widget buildMobileFieldWithIcon(String hintText, IconData icon, TextEditingController controller) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey.withOpacity(0.1),
@@ -265,14 +394,15 @@ class _RequestspageState extends State<Requestspage> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: TextField(
-          keyboardType: TextInputType.phone, // Use TextInputType.phone for number keypad
+          controller: controller,
+          keyboardType: TextInputType.phone,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(
               color: Colors.grey.shade700,
             ),
             icon: Icon(
-              Icons.phone, // Use Icons.phone for mobile number icon
+              icon,
               color: Colors.black,
             ),
             border: InputBorder.none,
@@ -283,37 +413,37 @@ class _RequestspageState extends State<Requestspage> {
   }
 
   Widget buildDateField() {
-    return GestureDetector(
-      onTap: () {
-        showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        ).then((selectedDate) {
-          if (selectedDate != null) {
-            _dateController.text = "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-          }
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: TextField(
-            controller: _dateController,
-            keyboardType: TextInputType.datetime,
-            decoration: InputDecoration(
-              hintText: 'DD/MM/YYYY',
-              hintStyle: TextStyle(color: Colors.grey.shade700),
-              icon: Icon(Icons.calendar_today, color: Colors.black),
-              border: InputBorder.none,
-            ),
-            readOnly: true,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: TextFormField(
+          controller: _dateController,
+          keyboardType: TextInputType.datetime,
+          decoration: InputDecoration(
+            hintText: 'DD/MM/YYYY',
+            hintStyle: TextStyle(color: Colors.grey.shade700),
+            icon: Icon(Icons.calendar_today, color: Colors.black),
+            border: InputBorder.none,
           ),
+          readOnly: true,
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+
+            showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            ).then((selectedDate) {
+              if (selectedDate != null) {
+                _dateController.text = "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+              }
+            });
+          },
         ),
       ),
     );
@@ -327,29 +457,37 @@ class _RequestspageState extends State<Requestspage> {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: DropdownButtonFormField<String>(
-          decoration: InputDecoration(
-            hintText: 'Gender',
-            hintStyle: TextStyle(color: Colors.grey.shade700),
-            icon: Icon(Icons.person, color: Colors.black),
-            border: InputBorder.none,
-          ),
-          value: _genderController.text,
-          items: ['Male', 'Female', 'Other'].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (String? value) {
-            setState(() {
-              _genderController.text = value!;
-            });
-          },
+        child: Row(
+          children: [
+            Icon(
+              Icons.person,
+              color: Colors.black,
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  hintText: 'Gender',
+                  hintStyle: TextStyle(color: Colors.grey.shade700),
+                  border: InputBorder.none,
+                ),
+                value: _genderController.text.isNotEmpty ? _genderController.text : null,
+                onChanged: (value) {
+                  setState(() {
+                    _genderController.text = value!;
+                  });
+                },
+                items: ['Male', 'Female', 'Other'].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-
 }
-
