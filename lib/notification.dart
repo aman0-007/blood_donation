@@ -161,6 +161,31 @@ class _ReceivedRequestsPageState extends State<ReceivedRequestsPage> {
     final mobile = data['mobile'] ?? '';
     final selectedBloodGroup = data['selectedBloodGroup'] ?? '';
 
+    // Fetch current user details from Firestore
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get();
+
+    if (!userDoc.exists) {
+      // Handle case where user details are not found
+      print('User details not found.');
+      return;
+    }
+
+    final userData = userDoc.data() as Map<String, dynamic>;
+
+    // User details to save
+    final donorDetails = {
+      'bloodGroup': userData['BloodGroup'] ?? '',
+      'dob': userData['dob'] ?? '',
+      'email': userData['email'] ?? '',
+      'gender': userData['gender'] ?? '',
+      'name': userData['name'] ?? '',
+      'phone': userData['phone'] ?? '',
+      'donorId': userId ?? '',
+    };
+
     try {
       final querySnapshot = await FirebaseFirestore.instance
           .collection('notifications')
@@ -171,9 +196,21 @@ class _ReceivedRequestsPageState extends State<ReceivedRequestsPage> {
           .get();
 
       for (var doc in querySnapshot.docs) {
-        await doc.reference.update({
+        var docRef = doc.reference;
+        var docData = doc.data() as Map<String, dynamic>;
+
+        // Retrieve the existing donors map or create a new one if it doesn't exist
+        Map<String, dynamic> donors = docData['donors'] != null
+            ? Map<String, dynamic>.from(docData['donors'])
+            : {};
+
+        // Add or update the donor details in the map
+        donors[userId] = donorDetails;
+
+        // Update the document with the new donors map
+        await docRef.update({
           'accepted': 'Yes',
-          'donorId': userId,
+          'donors': donors,
         });
       }
     } catch (e) {
@@ -266,7 +303,6 @@ class _ReceivedRequestsPageState extends State<ReceivedRequestsPage> {
               itemCount: documents.length,
               itemBuilder: (context, index) {
                 var data = documents[index].data() as Map<String, dynamic>;
-                var accepted = data['accepted'] ?? 'No';
 
                 // Extracting location data from the document
                 double currentLatitude = data['currentPosition']?['latitude']?.toDouble() ?? 0.0;
@@ -278,10 +314,14 @@ class _ReceivedRequestsPageState extends State<ReceivedRequestsPage> {
                   currentLongitude,
                 );
 
-                String statusText = accepted == 'No' ? 'Request Pending' : 'Request Accepted';
-                Widget statusIcon = accepted == 'No'
-                    ? Icon(Icons.cancel, color: Colors.grey)
-                    : Icon(Icons.person, color: Colors.grey);
+                // Check if current user ID is in the 'donors' map
+                Map<String, dynamic>? donors = data['donors'] != null ? Map<String, dynamic>.from(data['donors']) : {};
+                bool isAccepted = donors.containsKey(FirebaseAuth.instance.currentUser?.uid);
+
+                String statusText = isAccepted ? 'Request Accepted' : 'Request Pending';
+                Widget statusIcon = isAccepted
+                    ? Icon(Icons.check_circle, color: Colors.green)
+                    : Icon(Icons.cancel, color: Colors.grey);
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -385,7 +425,7 @@ class _ReceivedRequestsPageState extends State<ReceivedRequestsPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            if (accepted == 'No') ...[
+                            if (!isAccepted) ...[
                               InkWell(
                                 onTap: () {
                                   // Implement share functionality here
@@ -474,6 +514,7 @@ class _ReceivedRequestsPageState extends State<ReceivedRequestsPage> {
               },
             ),
           );
+
         },
       ),
     );
@@ -585,7 +626,6 @@ class _ReceivedRequestsPageState extends State<ReceivedRequestsPage> {
 
 }
 
-
 class MyRequestsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -630,7 +670,7 @@ class MyRequestsPage extends StatelessWidget {
           }
 
           return Padding(
-            padding: const EdgeInsets.only(left: 16.0,right: 16.0,bottom: 16.0),
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
             child: ListView.builder(
               itemCount: documents.length,
               itemBuilder: (context, index) {
@@ -793,17 +833,18 @@ class MyRequestsPage extends StatelessWidget {
                               SizedBox(width: 20,),
                               InkWell(
                                 onTap: () {
-                                  final donorId = data['donorId'] ?? ''; // Get the donorId from the data
-                                  if (donorId.isNotEmpty) {
-                                    _showDonorInfo(context, donorId);
+                                  final donors = data['donors'] as Map<String, dynamic>?;
+
+                                  if (donors != null && donors.isNotEmpty) {
+                                    _showDonorInfo(context, donors);
                                   } else {
-                                    // Handle the case where donorId is not available
+                                    // Handle the case where donors map is not present
                                     showDialog(
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
                                           title: Text("Error"),
-                                          content: Text("Donor ID is missing."),
+                                          content: Text("No donors found."),
                                           actions: [
                                             TextButton(
                                               onPressed: () {
@@ -847,34 +888,57 @@ class MyRequestsPage extends StatelessWidget {
     );
   }
 
-  void _showDonorInfo(BuildContext context, String donorId) async {
-    final donorDetails = await _fetchDonorDetails(donorId);
-
+  void _showDonorInfo(BuildContext context, Map<String, dynamic> donors) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: Text(
-            donorDetails != null ? "Donor Information" : "Error",
+            "Donor Information",
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: donorDetails != null ? Colors.black : Colors.red,
+              color: Colors.black,
             ),
           ),
-          content: donorDetails != null
-              ? SingleChildScrollView(
+          content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDetailRow("Name", donorDetails['name']),
-                _buildDetailRow("Phone", donorDetails['phone']),
-                _buildDetailRow("Email", donorDetails['email']),
-              ],
+              children: donors.entries.map((entry) {
+                final donorDetails = entry.value as Map<String, dynamic>;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailRow("Name", donorDetails['name']),
+                      _buildDetailRow("Phone", donorDetails['phone']),
+                      _buildDetailRow("Email", donorDetails['email']),
+                      _buildDetailRow("Gender", donorDetails['gender']),
+                      _buildDetailRow("DOB", donorDetails['dob']),
+                      _buildDetailRow("Blood Group", donorDetails['bloodGroup']),
+                      SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          _handleBloodTaken(context, entry.key); // Pass context and Donor ID
+                        },
+                        child: Text("Blood Taken"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent, // Button color
+                          foregroundColor: Colors.white, // Text color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Divider(thickness: 1, color: Colors.grey[300]),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
-          )
-              : Text(
-            "Could not fetch donor details.",
-            style: TextStyle(color: Colors.red),
           ),
           actions: [
             TextButton(
@@ -898,20 +962,28 @@ class MyRequestsPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "$label:",
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
+          Expanded(
+            flex: 1,
+            child: Text(
+              "$label:",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
             ),
           ),
-          Spacer(),
-          Text(
-            value ?? 'N/A',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.black.withOpacity(0.7),
+          Expanded(
+            flex: 2,
+            child: Text(
+              value ?? 'N/A',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black.withOpacity(0.7),
+              ),
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
             ),
           ),
         ],
@@ -919,24 +991,31 @@ class MyRequestsPage extends StatelessWidget {
     );
   }
 
-  Future<Map<String, dynamic>?> _fetchDonorDetails(String donorId) async {
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(donorId)
-          .get();
+  void _handleBloodTaken(BuildContext context, String donorId) {
+    // Implement the functionality for when "Blood Taken" is clicked.
+    print("Blood Taken for Donor ID: $donorId");
 
-      if (doc.exists) {
-        return doc.data() as Map<String, dynamic>;
-      } else {
-        print("No such document!");
-        return null;
-      }
-    } catch (e) {
-      print("Error fetching donor details: $e");
-      return null;
-    }
+    // You can show a dialog or perform some action here.
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Confirmation"),
+          content: Text("Marked as 'Blood Taken' for donor ID: $donorId"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Close"),
+            ),
+          ],
+        );
+      },
+    );
   }
+
+
 
   Future<void> _cancelRequest(
       BuildContext context,
@@ -964,3 +1043,5 @@ class MyRequestsPage extends StatelessWidget {
     }
   }
 }
+
+
