@@ -43,7 +43,7 @@ class Authentication {
     return null;
   }
 
-  Future<void> registerWithEmailAndPassword(BuildContext context,String name, String email, String password,String dob, String gender, String phone, String? bg) async {
+  Future<void> registerWithEmailAndPassword(BuildContext context,String name, String email, String password,String dob, String gender, String phone, String? bg, Position currentPosition, String fulladdress) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -65,6 +65,8 @@ class Authentication {
         'userId': userCredential.user?.uid,
         'lifeSaved': 0,
         'BloodGroup': bg,
+        'currentPosition':GeoPoint(currentPosition.latitude, currentPosition.longitude),
+        'full address' : fulladdress,
         'eligibilityToDonate': "pending",
       });
       await FirebaseFirestore.instance.collection('donors').doc(userCredential.user?.uid).set({});

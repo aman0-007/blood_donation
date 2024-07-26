@@ -1,6 +1,8 @@
 import 'package:blood_donor/authentication.dart';
+import 'package:blood_donor/googlemap/getlocation.dart';
 import 'package:blood_donor/loginscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 
 class RegisteScreen extends StatefulWidget {
@@ -19,6 +21,11 @@ class _RegisteScreenState extends State<RegisteScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   TextEditingController dobController = TextEditingController();
   TextEditingController genderController = TextEditingController();
+  final TextEditingController _address1Controller = TextEditingController();
+
+
+  Position? _currentPosition;
+  String _selectedAddress = '';
 
 
   final List<String> _bloodGroups = [
@@ -322,7 +329,7 @@ class _RegisteScreenState extends State<RegisteScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 40,top: 20),
                   child: Text(
-                    "E-mail/Phone Number",
+                    "E-mail",
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 12,
@@ -336,6 +343,79 @@ class _RegisteScreenState extends State<RegisteScreen> {
               child: TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 40.0, top: 20.0, right: 40),
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GetLocation(),
+                    ),
+                  );
+                  if (result != null) {
+                    setState(() {
+                      _currentPosition = Position(
+                        latitude: result['position'].latitude,
+                        longitude: result['position'].longitude,
+                        accuracy: 0.0, // provide an appropriate accuracy value
+                        altitude: 0.0,
+                        heading: 0.0,
+                        speed: 0.0,
+                        speedAccuracy: 0.0,
+                        timestamp: DateTime.now(),
+                        altitudeAccuracy: 0.0,
+                        headingAccuracy: 0.0,
+                      );
+                      _selectedAddress = result['selectedAddress'];
+                      _address1Controller.text = result['selectedAddress'];
+                    });
+                  }
+                },
+                icon: const Icon(Icons.location_on),
+                label: const Text('Select Location'),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(
+                      Colors.redAccent), // Background color
+                  foregroundColor: WidgetStateProperty.all<Color>(
+                      Colors.white), // Text color
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                  ),
+                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
+                  ),
+                  minimumSize: WidgetStateProperty.all<Size>(
+                    const Size(double.infinity, 0), // full width available
+                  ),
+                ),
+              ),
+            ),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 40, top: 30),
+                  child: Text(
+                    "Address ",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: TextField(
+                controller: _address1Controller,
               ),
             ),
             const Row(
@@ -426,7 +506,7 @@ class _RegisteScreenState extends State<RegisteScreen> {
                         if (_validateEmail(email) &&
                             _validatePassword(password) && password == confirmPassword) {
                           try {
-                            _authentication.registerWithEmailAndPassword(context, name, email, password,dob,gender, phone, _selectedBloodGroup);
+                            _authentication.registerWithEmailAndPassword(context, name, email, password,dob,gender, phone, _selectedBloodGroup, _currentPosition!, _selectedAddress);
                           } catch (e) {
                           }
                         } else {

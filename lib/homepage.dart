@@ -3,6 +3,8 @@ import 'package:blood_donor/authentication.dart';
 import 'package:blood_donor/bloodbanks.dart';
 import 'package:blood_donor/bloodinfo.dart';
 import 'package:blood_donor/checkeligibility.dart';
+import 'package:blood_donor/getinfo.dart';
+import 'package:blood_donor/hospitallist.dart';
 import 'package:blood_donor/nearbydonors.dart';
 import 'package:blood_donor/notification.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -82,7 +84,7 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 25,),
+            const SizedBox(height: 30,),
             Container(
               height: 200, // Adjusted height
               decoration: BoxDecoration(
@@ -157,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -271,7 +273,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -293,7 +295,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const Nearbydonors(),
+                          builder: (context) => const NearbyDonors(),
                         ),
                       );
                     },
@@ -329,7 +331,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
@@ -437,43 +439,51 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 30.0),
-                      child: SizedBox(
-                        height: 150,
-                        width: 150,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.grey.withOpacity(0.5), // Border color
-                              width: 1, // Border width
-                            ),
-                            borderRadius: BorderRadius.circular(10), // Border radius
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1), // Shadow color
-                                spreadRadius: 1, // Spread radius
-                                blurRadius: 2, // Blur radius
-                                offset: const Offset(0, 2), // Offset
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Hospitallist()),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 30.0),
+                        child: SizedBox(
+                          height: 150,
+                          width: 150,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.5), // Border color
+                                width: 1, // Border width
                               ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset("assets/bloodhospital.png"),
-                                const SizedBox(height: 7),
-                                const Text(
-                                  "Hospital",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              borderRadius: BorderRadius.circular(10), // Border radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1), // Shadow color
+                                  spreadRadius: 1, // Spread radius
+                                  blurRadius: 2, // Blur radius
+                                  offset: const Offset(0, 2), // Offset
                                 ),
                               ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/bloodhospital.png"),
+                                  const SizedBox(height: 7),
+                                  const Text(
+                                    "Hospital",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -529,43 +539,51 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 30.0),
-                      child: SizedBox(
-                        height: 150,
-                        width: 150,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.grey.withOpacity(0.5), // Border color
-                              width: 1, // Border width
-                            ),
-                            borderRadius: BorderRadius.circular(10), // Border radius
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1), // Shadow color
-                                spreadRadius: 1, // Spread radius
-                                blurRadius: 2, // Blur radius
-                                offset: const Offset(0, 2), // Offset
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Getinfo()),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 30.0),
+                        child: SizedBox(
+                          height: 150,
+                          width: 150,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.5), // Border color
+                                width: 1, // Border width
                               ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset("assets/bloodinfo.png"),
-                                const SizedBox(height: 7),
-                                const Text(
-                                  "Get Info",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              borderRadius: BorderRadius.circular(10), // Border radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1), // Shadow color
+                                  spreadRadius: 1, // Spread radius
+                                  blurRadius: 2, // Blur radius
+                                  offset: const Offset(0, 2), // Offset
                                 ),
                               ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/bloodinfo.png"),
+                                  const SizedBox(height: 7),
+                                  const Text(
+                                    "Get Info",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

@@ -66,8 +66,6 @@ class _RequestspageState extends State<Requestspage> {
       // Save data to Firestore in the specified structure
       await FirebaseFirestore.instance
           .collection('notifications')
-          .doc(userId)
-          .collection('notifications')
           .add(data);
 
       // Clear all the controller values
@@ -79,10 +77,6 @@ class _RequestspageState extends State<Requestspage> {
 
       // Clear other variables if necessary
       _currentPosition = null;
-
-
-      // Optionally, navigate to Home Page after successful submission
-      // Navigator.of(context).push(MaterialPageRoute(builder: (_) => HomePage()));
     } catch (e) {
       print('Error saving data: $e');
       // Handle error saving data
