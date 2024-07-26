@@ -129,111 +129,58 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
 }
 
 class ReceivedRequestsPage extends StatelessWidget {
-  // Method to fetch all notifications from all user documents
-  Stream<List<Map<String, dynamic>>> getAllNotificationsStream() async* {
-    // Fetch all user documents in the `notifications` collection
-    final userDocsSnapshot = await FirebaseFirestore.instance.collection('notifications').get();
-
-    List<Map<String, dynamic>> allNotifications = [];
-
-    for (var userDoc in userDocsSnapshot.docs) {
-      // Fetch notifications from each user's sub-collection
-      final notificationsSnapshot = await FirebaseFirestore.instance
-          .collection('notifications')
-          .doc(userDoc.id)
-          .collection('notifications')
-          .get();
-
-      final notifications = notificationsSnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-      allNotifications.addAll(notifications);
-    }
-
-    yield allNotifications;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Notifications"),
+        title: Text('Received Requests'),
       ),
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: getAllNotificationsStream(),
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: FirebaseFirestore.instance.collection('notifications').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("No requests found."));
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text('No requests found.'));
           }
 
-          final notifications = snapshot.data!;
+          final notifications = snapshot.data!.docs;
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView.builder(
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                var data = notifications[index];
+          // Print main collection documents
+          print('Number of notifications: ${notifications.length}');
+          for (var doc in notifications) {
+            print('Notification Document ID: ${doc.id}');
+            print('Notification Document Data: ${doc.data()}');
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                color: Colors.redAccent.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                "${data['selectedBloodGroup'] ?? 'N/A'}",
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Gender: ${data['gender'] ?? 'N/A'}",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  "Patient Name: ${data['patientName'] ?? 'N/A'}",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          "Number of Units: ${data['numberOfUnits'] ?? 'N/A'}",
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
+            // Fetch and print details from subcollection
+            FirebaseFirestore.instance
+                .collection('notifications')
+                .doc(doc.id)
+                .collection('notifications')
+                .snapshots()
+                .listen((subSnapshot) {
+              if (subSnapshot.docs.isEmpty) {
+                print('No details found for notification ID: ${doc.id}');
+              } else {
+                final details = subSnapshot.docs;
+                print('Number of details for notification ID ${doc.id}: ${details.length}');
+                for (var detailDoc in details) {
+                  print('Detail Document ID: ${detailDoc.id}');
+                  print('Detail Document Data: ${detailDoc.data()}');
+                }
+              }
+            });
+
+            // To avoid UI blocking, you may want to use a future that completes in this builder.
+          }
+
+          // Returning an empty container as we are only interested in console output
+          return Container();
         },
       ),
     );
@@ -258,6 +205,7 @@ class MyRequestsPage extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('notifications')
