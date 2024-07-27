@@ -7,6 +7,7 @@ import 'package:blood_donor/getinfo.dart';
 import 'package:blood_donor/hospitallist.dart';
 import 'package:blood_donor/nearbydonors.dart';
 import 'package:blood_donor/notification.dart';
+import 'package:blood_donor/qr/user_id_card_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -53,10 +54,15 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: Image.asset(
-          "assets/blooddrop.png",
-          width: 26,
-          height: 26,
+        leading: InkWell(
+          onTap: (){
+            //Navigator.of(context).push(MaterialPageRoute(builder: (_) => IdCardPage()));
+          },
+          child: Image.asset(
+            "assets/blooddrop.png",
+            width: 26,
+            height: 26,
+          ),
         ),
         title: const Text(
           "Blood Donor",

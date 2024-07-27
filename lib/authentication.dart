@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Authentication {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -152,8 +153,15 @@ class Authentication {
 
   Future<void> signOut(BuildContext context) async {
     try {
+      // Sign out from Firebase and Google Sign-In
       await _auth.signOut();
       await googleSignIn.signOut();
+
+      // Clear SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+
+      // Show success message and navigate to the AccountOptionPage
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Signed out')),
       );
@@ -162,6 +170,7 @@ class Authentication {
         MaterialPageRoute(builder: (context) => const AccountOptionPage()),
       );
     } catch (error) {
+      // Show error message if sign-out fails
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to sign out')),
       );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 import 'package:blood_donor/authentication.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -27,22 +26,16 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> fetchUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      DocumentSnapshot<Map<String, dynamic>> userData =
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      if (userData.exists) {
-        setState(() {
-          nameController.text = userData['name'] ?? '';
-          genderController.text = userData['gender'] ?? '';
-          emailController.text = userData['email'] ?? '';
-          phoneController.text = userData['phone'] ?? '';
-          dobController.text = userData['dob'] ?? '';
-          lifeSavedController.text = userData['lifeSaved'].toString(); // Convert number to string
-          bloodGroupController.text = userData['BloodGroup'] ?? '';
-        });
-      }
-    }
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nameController.text = prefs.getString('name') ?? '';
+      genderController.text = prefs.getString('gender') ?? '';
+      emailController.text = prefs.getString('email') ?? '';
+      phoneController.text = prefs.getString('phone') ?? '';
+      dobController.text = prefs.getString('dob') ?? '';
+      lifeSavedController.text = prefs.getString('lifeSaved') ?? ''; // Use empty string if not found
+      bloodGroupController.text = prefs.getString('bloodGroup') ?? '';
+    });
   }
 
   Widget buildTextField({required String label, required TextEditingController controller}) {

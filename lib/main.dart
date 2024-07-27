@@ -6,10 +6,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:blood_donor/accountoptionpage.dart';
 import 'package:blood_donor/bottomnavigationpage.dart';
 import 'package:blood_donor/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
+  await Firebase.initializeApp();
+  await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
@@ -44,6 +46,25 @@ class _MyHomePageState extends State<MyHomePage> {
     checkUserLoginStatus();
   }
 
+  Future<void> fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot<Map<String, dynamic>> userData =
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (userData.exists) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('userId', user.uid);
+        await prefs.setString('name', userData['name'] ?? '');
+        await prefs.setString('gender', userData['gender'] ?? '');
+        await prefs.setString('email', userData['email'] ?? '');
+        await prefs.setString('phone', userData['phone'] ?? '');
+        await prefs.setString('dob', userData['dob'] ?? '');
+        await prefs.setString('lifeSaved', (userData['lifeSaved'] ?? '').toString()); // Convert number to string
+        await prefs.setString('bloodGroup', userData['BloodGroup'] ?? '');
+      }
+    }
+  }
+
   Future<void> checkUserLoginStatus() async {
     // Simulating a delay for demonstration purposes
     await Future.delayed(const Duration(seconds: 2));
@@ -59,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // Navigate based on donor status
       if (docSnapshot.exists) {
+        await fetchUserData();
         // If the document exists, navigate to Bottomnavigationpage
         Navigator.pushReplacement(
           context,
