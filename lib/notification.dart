@@ -626,8 +626,6 @@ class _ReceivedRequestsPageState extends State<ReceivedRequestsPage> {
 
 }
 
-
-
 class MyRequestsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -838,7 +836,7 @@ class MyRequestsPage extends StatelessWidget {
                                   final donors = data['donors'] as Map<String, dynamic>?;
 
                                   if (donors != null && donors.isNotEmpty) {
-                                    _showDonorInfo(context, donors);
+                                    _showDonorInfo(context, donors, data);
                                   } else {
                                     showDialog(
                                       context: context,
@@ -889,7 +887,7 @@ class MyRequestsPage extends StatelessWidget {
     );
   }
 
-  void _showDonorInfo(BuildContext context, Map<String, dynamic> donors) {
+  void _showDonorInfo(BuildContext context, Map<String, dynamic> donors, Map<String, dynamic> data) {
     showDialog(
       context: context,
       builder: (context) {
@@ -921,7 +919,28 @@ class MyRequestsPage extends StatelessWidget {
                       SizedBox(height: 8),
                       ElevatedButton(
                         onPressed: () {
-                          _handleBloodTaken(context, entry.key); // Pass Donor ID
+                          final donorId = donorDetails['donorId'];
+                          if (donorId != null && donorId.isNotEmpty && data != null) {
+                            _handleBloodTaken(context, donorId, data);
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text("Error"),
+                                  content: Text("Donor ID or data is missing."),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(); // Close the dialog
+                                      },
+                                      child: Text("Close"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
                         },
                         child: Text("Blood Taken"),
                         style: ElevatedButton.styleFrom(
@@ -992,10 +1011,27 @@ class MyRequestsPage extends StatelessWidget {
     );
   }
 
-  void _handleBloodTaken(BuildContext context, String donorId) {
-    // Assuming you have some way of retrieving 'data' here
-    final data = {/* your notification data here */}; // Replace with actual data
-
+  void _handleBloodTaken(BuildContext context, String? donorId, Map<String, dynamic>? data) {
+    if (donorId == null || donorId.isEmpty || data == null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("Invalid data provided. Please try again."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: Text("Close"),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
     showDialog(
       context: context,
       builder: (context) {
@@ -1013,29 +1049,47 @@ class MyRequestsPage extends StatelessWidget {
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the dialog
 
-                // Perform the action for when "Yes" is clicked
-                // Casting data to Map<String, dynamic>
-                final typedData = data as Map<String, dynamic>;
-                await _updateBloodStatus(donorId, FirebaseAuth.instance.currentUser?.uid ?? '', typedData);
+                try {
+                  await _updateBloodStatus(donorId, FirebaseAuth.instance.currentUser?.uid ?? '', data);
 
-                // Show another dialog or message indicating success
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text("Success"),
-                      content: Text("Blood taken from this user has been successfully updated."),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Close the dialog
-                          },
-                          child: Text("Close"),
-                        ),
-                      ],
-                    );
-                  },
-                );
+                  // Show success dialog
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Success"),
+                        content: Text("Blood taken from this user has been successfully updated."),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                            child: Text("Close"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } catch (e) {
+                  // Show error dialog
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Error"),
+                        content: Text("An error occurred: $e"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                            child: Text("Close"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               },
               child: Text("Yes"),
             ),
@@ -1045,37 +1099,28 @@ class MyRequestsPage extends StatelessWidget {
     );
   }
 
-  Future<void> _updateBloodStatus(String donorId, String userId, Map<String, dynamic> data) async {
+  Future<void> _updateBloodStatus(String donorId, String currentUserId, Map<String, dynamic> data) async {
     try {
-      // Get the reference to the users and donors collections
       final usersCollection = FirebaseFirestore.instance.collection('users');
-      final donorsCollection = FirebaseFirestore.instance.collection('donors');
       final notificationsCollection = FirebaseFirestore.instance.collection('notifications');
 
-      // 1. Find and update the user document with the donorId
-      final donorDoc = await donorsCollection.doc(donorId).get();
-      if (!donorDoc.exists) {
-        print("Donor document not found.");
-        return;
-      }
-
-      final userDocId = donorDoc.data()?['userId'];
-      final userDocRef = usersCollection.doc(userDocId);
+      final userDocRef = usersCollection.doc(donorId);
 
       // Update user document
       await userDocRef.update({
         'lifeSaved': FieldValue.increment(1),
-        'lastDonationDate': Timestamp.now(),
-        'donations.${userId}_${data['patientName']}_${data['mobile']}': {
-          'userId': userId,
+        'donations.${currentUserId}_${data['patientName']}_${data['mobile']}': {
+          'donationStatus': 'donated',
+          'accepterId': currentUserId,
           'patientName': data['patientName'],
           'mobile': data['mobile'],
           'selectedBloodGroup': data['selectedBloodGroup'],
         },
       });
 
-      // 2. Update the notification document
-      final notificationsSnapshot = await notificationsCollection.where('userId', isEqualTo: userId)
+      // Update the notification document
+      final notificationsSnapshot = await notificationsCollection
+          .where('userId', isEqualTo: currentUserId)
           .where('patientName', isEqualTo: data['patientName'])
           .where('mobile', isEqualTo: data['mobile'])
           .where('selectedBloodGroup', isEqualTo: data['selectedBloodGroup'])
@@ -1088,17 +1133,11 @@ class MyRequestsPage extends StatelessWidget {
       print("Blood status updated successfully.");
     } catch (e) {
       print("Error updating blood status: $e");
+      rethrow; // To handle in the calling method
     }
   }
 
-
-  Future<void> _cancelRequest(
-      BuildContext context,
-      String? userId,
-      String? patientName,
-      String? mobile,
-      String? selectedBloodGroup,
-      ) async {
+  Future<void> _cancelRequest(BuildContext context, String? userId, String? patientName, String? mobile, String? selectedBloodGroup) async {
     if (userId == null || patientName == null || mobile == null || selectedBloodGroup == null) {
       return;
     }
