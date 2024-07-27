@@ -1128,6 +1128,7 @@ class MyRequestsPage extends StatelessWidget {
 
       for (final doc in notificationsSnapshot.docs) {
         await doc.reference.update({'solved': 'Yes'});
+        await doc.reference.update({'solvedBy': donorId});
       }
 
       print("Blood status updated successfully.");
